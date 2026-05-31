@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.3, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is documentation of Roan, version 9.0.29.
+
+This documentation is copyright © 2015-2026 Donald F Morrison.
+
+Copying and distribution of this documentation, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved. -->
+<title>Building and Modifying Roan (Roan 9.0.29)</title>
+
+<meta name="description" content="Building and Modifying Roan (Roan 9.0.29)">
+<meta name="keywords" content="Building and Modifying Roan (Roan 9.0.29)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Documentation-Index.html" rel="index" title="Documentation Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html" rel="up" title="Top">
+<link href="Documentation-Index.html" rel="next" title="Documentation Index">
+<link href="History.html#History" rel="prev" title="History">
+<style type="text/css">
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+ul.mark-bullet {list-style-type: disc}
+body {
+    max-width: 44em;
+    margin-left: 2em;
+    background-color: white;
+}
+
+</style>
+
+
+</head>
+
+<body>
+<div class="appendix-level-extent" id="Building-and-Modifying-Roan">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="Documentation-Index.html" rel="next">Index</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="History.html#History" rel="prev">History</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h2 class="appendix" id="Building-and-Modifying-Roan-1"><span>Appendix D Building and Modifying Roan<a class="copiable-link" href="#Building-and-Modifying-Roan-1"> &para;</a></span></h2>
+
+<p>Since Roan is written in Lisp there really is no build process: your Lisp implementation,
+under the direction of Quicklisp and ASDF, will happily just compile and load it.
+</p>
+<p>However, the documentation does have a slightly complex build process. And if you
+are modifying Roan you really should make friends with the unit tests.
+</p>
+<a class="index-entry-id" id="index-building"></a>
+<a class="index-entry-id" id="index-documentation"></a>
+<ul class="mini-toc">
+<li><a href="#Building-the-documentation">Building the documentation</a></li>
+<li><a href="#Running-unit-tests">Running unit tests</a></li>
+</ul>
+<hr>
+<div class="section-level-extent" id="Building-the-documentation">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Running-unit-tests" rel="next">Running unit tests</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Building-and-Modifying-Roan" rel="up">Building and Modifying Roan</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="Building-the-documentation-1"><span>D.1 Building the documentation<a class="copiable-link" href="#Building-the-documentation-1"> &para;</a></span></h3>
+
+<a class="anchor" id="building"></a>
+<a class="index-entry-id" id="index-documentation-1"></a>
+<a class="index-entry-id" id="index-manual"></a>
+<a class="index-entry-id" id="index-building-1"></a>
+<a class="index-entry-id" id="index-Texinfo"></a>
+<a class="index-entry-id" id="index-extract_002ddocumentation"></a>
+<a class="index-entry-id" id="index-Makefile"></a>
+<a class="index-entry-id" id="index-PDF"></a>
+<a class="index-entry-id" id="index-HTML"></a>
+<a class="index-entry-id" id="index-Info"></a>
+<p>This manual is written using
+<a class="url" href="https://www.gnu.org/software/texinfo/">Texinfo</a>.
+Depending upon how your environment is already configured you may have to download
+and install Texinfo software, TeX and/or LaTeX.
+</p>
+<p>There is a file included in the source tree, though not a part of Roan per
+se, <samp class="file">extract-documentation.lisp</samp>, that is used to extract the documentation
+strings associated with symbols exported from the <code class="code">roan</code> package. This
+is done using the <code class="code">roan/doc:extract-documentation</code> function. For each exported
+symbol it writes a small <samp class="file">.texi</samp> file in the <samp class="file">doc/inc</samp> directory
+with its documentation
+string, augmented with some further Texinfo commands. The documentation strings in
+the Roan sources are themselves infested with appropriate Texinfo commands.
+Most of these small files are then <code class="code">@include</code>d into the main Texinfo file,
+<samp class="file">roan.texi</samp>, to document the various functions, macros and types.
+In addition to <samp class="file">roan.texi</samp>, there is also a small collection of style
+information used by the <abbr class="acronym">HTML</abbr> versions of the documentation in
+<samp class="file">roan.css</samp>.
+</p>
+<p>After the documentation strings have been extracted <code class="command">makeinfo</code> needs to
+be called for each of the four versions of the documentation that are produced:
+</p><ul class="itemize mark-bullet">
+<li>an Info file
+</li><li>a <abbr class="acronym">PDF</abbr> file
+</li><li>a single <abbr class="acronym">HTML</abbr> file
+</li><li>a collection of <abbr class="acronym">HTML</abbr> files, one per chapter
+</li></ul>
+
+<a class="index-entry-id" id="index-Steel-Bank-Common-Lisp"></a>
+<a class="index-entry-id" id="index-SBCL"></a>
+<p>So long as SBCL (Steel Bank Common Lisp) is installed, the <samp class="file">Makefile</samp> in the source
+hierarchy should do all this for you.
+If preferred, the <samp class="file">Makefile</samp> can be easily modified to use a different Lisp
+implementation to run <code class="code">extract-documentation</code>.
+Note that if you are using SBCL it will emit several warnings about an inability to
+find docstrings for an SBCL internal type; these warnings can be safely ignored.
+</p>
+<a class="index-entry-id" id="index-Edward-Smith"></a>
+<a class="index-entry-id" id="index-Smith_002c-Edward"></a>
+<a class="index-entry-id" id="index-Titanic"></a>
+<a class="index-entry-id" id="index-RMS-Titanic"></a>
+<p>If a public function is added to Roan, it should include a suitable documentation string,
+and <samp class="file">roan.texi</samp> should be revised to give it an appropriate home, where the
+corresponding <samp class="file">inc/*-function.texi</samp> file is <code class="code">@include</code>d. So long as you export
+its name from the <code class="code">roan</code> package it should be picked up when building the
+documentation.
+Then, run
+<code class="command">make documentation</code> and if all goes
+well<a class="footnote" id="DOCF1" href="#FOOT1"><sup>1</sup></a>,
+all four kinds of documentation will be nicely produced a few seconds later.
+</p>
+<p>Of course, most of the time, all won&rsquo;t go well. Besides looking carefully at the rather noisy
+output from <code class="command">makeinfo</code>, here are a few other things to bear in mind:
+</p><ul class="itemize mark-bullet">
+<li>Even though a problem looks like it&rsquo;s in <samp class="file">roan.texi</samp>, it might be in a
+documentation string in a source file; Texinfo is pretty good about
+identifying the include file that&rsquo;s causing the problem, unless the problem
+is just too subtle for it.
+
+</li><li><a class="index-entry-id" id="index-_0040_002dsign"></a>
+<a class="index-entry-id" id="index-at_002dsign"></a>
+<a class="index-entry-id" id="index-braces"></a>
+Any occurrences of braces, &lsquo;<samp class="samp">{}</samp>&rsquo;, or an at-sign, &lsquo;<samp class="samp">@</samp>&rsquo;, in a documentation string
+will be interpreted magically by Texinfo, and need to be quoted with an &lsquo;<samp class="samp">@</samp>&rsquo;.
+
+</li><li><a class="index-entry-id" id="index-_0022"></a>
+<a class="index-entry-id" id="index-quotes"></a>
+When writing examples in documentation strings, if the examples use Lisp strings, the double
+quotes need to be escaped with back slashes, or Lisp will become confused.
+
+</li><li><a class="index-entry-id" id="index-parentheses-1"></a>
+<a class="index-entry-id" id="index-Emacs"></a>
+<a class="index-entry-id" id="index-fill_002dparagraph"></a>
+Even if you are not one yourself, be nice to Emacs users. In Lisp mode Emacs treats an
+open parenthesis, &lsquo;<samp class="samp">(</samp>&rsquo;, at the beginning of a line specially, and will become badly
+confused if you have such in a documentation string. When writing examples, indent such
+Lisp code by one space to keep Emacs happy. Similarly be sure to format documentation
+strings so that parenthetical comments do not start at the beginning of a line; Emacs&rsquo;s
+own <code class="code">fill-paragraph</code> command is careful about that on your behalf.
+
+</li><li>Texinfo is a complex system. If you&rsquo;re going to use it, you&rsquo;re going to have to learn a
+bit about it. Until you become facile with it its usually easiest to make changes slowly
+and incrementally.
+
+</li><li>Writing good documentation is often harder than writing the corresponding code.
+</li></ul>
+
+
+<a class="index-entry-id" id="index-tests"></a>
+<a class="index-entry-id" id="index-unit-tests"></a>
+<a class="index-entry-id" id="index-lisp_002dunit2"></a>
+<hr>
+</div>
+<div class="section-level-extent" id="Running-unit-tests">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Building-the-documentation" rel="prev">Building the documentation</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Building-and-Modifying-Roan" rel="up">Building and Modifying Roan</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="Running-unit-tests-1"><span>D.2 Running unit tests<a class="copiable-link" href="#Running-unit-tests-1"> &para;</a></span></h3>
+
+<a class="anchor" id="testing"></a>
+<p>The Roan source tree contains a collection of unit tests. If you are making changes to Roan
+it is <em class="emph">highly</em> recommended that you make friends with them and use them early and
+often. Unless run on an unusally slow machine or Lisp implementation it takes less than
+a minute to run the full collection, and in the long run they will save you a lot of time.
+</p>
+<p>The unit tests live in their own package, <code class="code">roan/test</code>, and make use of a further library
+not included in Roan itself, <a class="url" href="https://github.com/AccelerationNet/lisp-unit2">lisp-unit2</a>.
+After running  <code class="code">(ql:quickload :roan/test)</code> it should be possible to run all the
+unit tests by simply evaluating <code class="code">(roan/test:test-roan)</code>. If the unit tests all succeed
+it will report the success of about 13,000 assertions with no failures. Otherwise, you&rsquo;ll
+have some debugging to do.
+</p>
+<p>One caveat: a few of the tests, related to upgrading the methods library, require access
+to the internet. If it is not available, there will be a failures reported.
+</p>
+<p>If you make changes to Roan I suggest you run the unit tests frequently. If you care about
+portability, run them at least occasionally on as many different Lisp implementations as
+you have access to. And if you add functions to Roan, add unit tests for them, too.
+</p>
+<p>Writing decent, reusable tests is often harder and more time consuming than writing code;
+but it&rsquo;s a lot easier and less time consuming than debugging things days, weeks, months or
+years after they were first written. This is especially true for a relatively low-level
+library such as Roan.
+</p>
+
+
+</div>
+</div>
+<div class="footnotes-segment">
+<hr>
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<h5 class="footnote-body-heading"><a id="FOOT1" href="#DOCF1">(1)</a></h5>
+<p>According to John Pladdys
+&ldquo;If all goes well&rdquo; was a favorite expression of the sea captain Edward Smith.</p>
+</div>
+<hr>
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="Documentation-Index.html" rel="next">Index</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="History.html#History" rel="prev">History</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+
+
+
+</body>
+</html>

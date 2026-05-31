@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.3, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is documentation of Roan, version 9.0.29.
+
+This documentation is copyright © 2015-2026 Donald F Morrison.
+
+Copying and distribution of this documentation, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved. -->
+<title>Falseness (Roan 9.0.29)</title>
+
+<meta name="description" content="Falseness (Roan 9.0.29)">
+<meta name="keywords" content="Falseness (Roan 9.0.29)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Documentation-Index.html" rel="index" title="Documentation Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html" rel="up" title="Top">
+<link href="Calls.html" rel="next" title="Calls">
+<link href="Methods.html#Methods" rel="prev" title="Methods">
+<style type="text/css">
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+dt.def-line {font-size: 1rem}
+span:hover a.copiable-link {visibility: visible}
+strong.def-name {font-family: monospace; font-weight: bold}
+body {
+    max-width: 44em;
+    margin-left: 2em;
+    background-color: white;
+}
+
+</style>
+
+
+</head>
+
+<body>
+<div class="chapter-level-extent" id="Falseness">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="Calls.html" rel="next">Calls</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="Methods.html#Methods" rel="prev">Methods</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h2 class="chapter" id="Internal-Falseness"><span>6 Internal Falseness<a class="copiable-link" href="#Internal-Falseness"> &para;</a></span></h2>
+
+<p>Most methods that have been rung and named at stages major and above have been rung at
+even stages, with Plain Bob lead ends and lead heads, without jump changes, and with the
+usual palindromic symmetry. For major, and at higher stages, if the tenors are kept
+together the false course heads of such methods are traditionally partitioned into named
+sets all of whose elements must occur together in such methods. These are traditionally
+called &ldquo;false course head groups&rdquo; (FCHs), although they are not what mathemeticians
+usually mean by the word &ldquo;group&rdquo;. Further information is available from a variety of
+sources, including Appendix B of
+<a class="url" href="http://www.methods.org.uk/method-collections/xml-zip-files/method%20xml%201.0.pdf">Peter Niblett&rsquo;s XML format documentation</a>.
+</p>
+<p>Roan provides a collection of <code class="code">fch-group</code> objects that represent these FCH groups.
+Each is intended to be an singleton object, and under normal circumstances new instances
+should not be created. They can thus be compared using <code class="code">eq</code>, if desired. The
+<code class="code">fch-group</code>s for major are distinct from those for higher stages, though their
+contents are closely related.
+</p>
+<p>An <code class="code">fch-group</code> can be retrieved using the <code class="code">fch-group</code> function. The first
+argument to this function can be either a <code class="code">row</code> or a string. If a <code class="code">row</code>
+the <code class="code">fch-group</code> that contains that row is returned. If a string the <code class="code">fch-group</code>
+with that name is returned. In this latter case two further, optional arguments can be
+used to state that the group for higher stages is desired, and whether the one with just
+in course or just out of course false course heads is desired; for major all the
+<code class="code">fch-group</code>s contain both in and out of course elements.
+</p>
+<p>The <code class="code">fch-group-name</code>, <code class="code">fch-group-parity</code> and <code class="code">fch-group-elements</code> functions
+can be used to retrieve the name, parity and elements of a <code class="code">fch-group</code>. The
+<code class="code">method-falseness</code> function calculates the false course heads of non-differential,
+treble dominated methods at even stages major and above, and for those with the usual
+palindromic symmetry and Plain Bob lead heads and lead ends, also returns the relevant
+<code class="code">fch-group</code>s. The <code class="code">fch-groups-string</code> function can be used to format a
+collection of <code class="code">fch-group</code> names in a traditional, compact manner.
+</p>
+<p>It is possible to extend the usual FCH groups to methods with non-Plain Bob lead heads.
+However, Roan currently provides no support for this.
+<a class="anchor" id="fch_002dgroup_002dtype"></a><a class="index-entry-id" id="index-fch_002dgroup"></a>
+</p><dl class="first-deftp def-block">
+<dt class="deftp def-line" id="index-fch_002dgroup-3"><span class="category-def">Type: </span><span><strong class="def-name">fch-group</strong><a class="copiable-link" href="#index-fch_002dgroup-3"> &para;</a></span></dt>
+<dd><p>Describes a false course head group, including its name, parity if for even stages above
+major, and a list of the course heads it contains. The parity is <code class="code">nil</code> for major
+<code class="code">fch-group</code>s, and one of the keywords <code class="code">:in-course</code> or <code class="code">:out-of-course</code> for
+higher stages. The elements of a major <code class="code">fch-group</code> are major <code class="code">row</code>s while those
+for a higher stage <code class="code">fch-group</code> are royal <code class="code">row</code>s.
+</p></dd></dl>
+<a class="anchor" id="fch_002dgroup"></a><a class="index-entry-id" id="index-fch_002dgroup-1"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-fch_002dgroup-2"><span class="category-def">Function: </span><span><strong class="def-name">fch-group</strong> <var class="def-var-arguments">item &amp;optional higher-stage out-of-course</var><a class="copiable-link" href="#index-fch_002dgroup-2"> &para;</a></span></dt>
+<dd><p>Returns an <code class="code">fch-group</code> described by the provided arguments. The <var class="var">item</var> can be
+either a <code class="code">row</code> or a string designator.
+</p>
+<p>If <var class="var">item</var> is a <code class="code">row</code> the <code class="code">fch-group</code> that contains that row among its
+elements is returned. If it is not at an even stage, major or above, or if it is at an
+even stage royal or above but with any of the bells conventionally called the seven (and
+represented in Roan by the integer <code class="code">6</code>) or higher out of their rounds positions,
+<code class="code">nil</code> is returned. If <var class="var">item</var> is a <code class="code">row</code> at an even stage maximus or above,
+with the back bells in their home positions, it is treated as if it were the equivalent
+royal <code class="code">row</code>. When <var class="var">item</var> is a <code class="code">row</code> neither <var class="var">higher-stage</var> nor
+<var class="var">out-of-course</var> may be supplied.
+</p>
+<p>If <var class="var">item</var> is a string designator the <code class="code">fch-group</code> that has that name is returned.
+If the generalized boolean <var class="var">higher-stage</var> is true a higher stage <code class="code">fch-group</code> is
+returned and others a major one. In the case of higher stage groups if the generalized
+boolean <var class="var">out-of-course</var> is true the group with the given name containing only out of
+course elements is returned, and otherwise the one with only in course elements. Both
+<var class="var">higher-stage</var> and <var class="var">out-of-course</var> default to <code class="code">nil</code> if not supplied. If there
+is no <code class="code">fch-group</code> with name <var class="var">item</var> and the given properties <code class="code">nil</code> is
+returned.
+</p>
+<p>Signals a <code class="code">type-error</code> if <var class="var">item</var> is neither a <code class="code">row</code> nor a string designator.
+Signals an error if <var class="var">item</var> is a <code class="code">row</code> and <var class="var">higher-stage</var> or
+<var class="var">out-of-course</var> is supplied.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (let ((g (fch-group !2436578)))
+   (list (fch-group-name g)
+         (fch-group-parity g)
+         (stage (first (fch-group-elements g)))))
+    &rArr; (&quot;B&quot; nil 8)
+ (fch-group &quot;a1&quot; t nil) &rArr; nil
+ (fch-group-elements (fch-group &quot;a1&quot; t t)) &rArr; (!1234657890)
+</pre></div></div>
+</dd></dl>
+
+<a class="anchor" id="fch_002dgroup_002dname_002dfunction"></a><a class="anchor" id="fch_002dgroup_002dparity_002dfunction"></a><a class="anchor" id="fch_002dgroup_002delements_002dfunction"></a><dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-fch_002dgroup_002dname"><span class="category-def">Function: </span><span><strong class="def-name">fch-group-name</strong> <var class="def-var-arguments">group</var><a class="copiable-link" href="#index-fch_002dgroup_002dname"> &para;</a></span></dt>
+<dt class="deffnx def-cmd-deffn def-line" id="index-fch_002dgroup_002dparity"><span class="category-def">Function: </span><span><strong class="def-name">fch-group-parity</strong> <var class="def-var-arguments">group</var><a class="copiable-link" href="#index-fch_002dgroup_002dparity"> &para;</a></span></dt>
+<dt class="deffnx def-cmd-deffn def-line" id="index-fch_002dgroup_002delements"><span class="category-def">Function: </span><span><strong class="def-name">fch-group-elements</strong> <var class="def-var-arguments">group</var><a class="copiable-link" href="#index-fch_002dgroup_002delements"> &para;</a></span></dt>
+<dd><p>Returns the name, parity or elements of the <code class="code">fch-group</code> <var class="var">group</var>.
+</p>
+<p>The value returned by <code class="code">fch-group-name</code> is a string of length one or two. For major
+groups it is always of length one, and is a letter. For higher stages if of length one it
+is again a letter, and if of length two it is a letter followed by the digit &lsquo;<samp class="samp">1</samp>&rsquo; or
+the digit &lsquo;<samp class="samp">2</samp>&rsquo;. The case of letters in <code class="code">fch-group</code> names is significant.
+</p>
+<p>For major <code class="code">fch-group</code>s <code class="code">fch-group-parity</code> always returns <code class="code">nil</code>. For higher
+stage <code class="code">fch-group</code>s it always returns either <code class="code">:in-course</code> or
+<code class="code">:out-of-course</code>.
+</p>
+<p>The <code class="code">fch-group-elements</code> function returns a list of <code class="code">row</code>s, the elements of the
+group. For major groups these are always major <code class="code">row</code>s, and for higher stage groups
+royal <code class="code">rows</code>. The <code class="code">alter-stage</code> fucntion (see <a class="pxref" href="Fundamental-Types.html#alter_002dstage">alter-stage</a>) can be helpful
+for making such <code class="code">row</code>s conform to the needs of other stages above major.
+</p>
+<p>All three functions signal a <code class="code">type-error</code> if <var class="var">group</var> is not a <code class="code">fch-group</code>.
+</p></dd></dl>
+
+<a class="anchor" id="fch_002dgroups_002dstring"></a><a class="index-entry-id" id="index-fch_002dgroups_002dstring"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-fch_002dgroups_002dstring-1"><span class="category-def">Function: </span><span><strong class="def-name">fch-groups-string</strong> <var class="def-var-arguments">collection &amp;rest more-collections</var><a class="copiable-link" href="#index-fch_002dgroups_002dstring-1"> &para;</a></span></dt>
+<dd><p>Returns a string succinctly describing a set of <code class="code">fch-group</code>s, in a conventional
+order. The set of <code class="code">fch-group</code>s is the union of all those contained in the arguments,
+each of which should be a sequence or <code class="code">hash-set</code>, all of whose elements are
+<code class="code">fch-group</code>s. The resulting string contains the names of the distinct
+<code class="code">fch-group</code>s. If there are no groups <code class="code">nil</code>, rather than an empty string, is
+returned.
+</p>
+<p>For higher stages there are two sequences of group names in the string, separated by a
+solidus (&lsquo;<samp class="samp">/</samp>&rsquo;); those before the solidus are in course and those after it out of
+course. For example, <code class="code">&quot;B/Da1&quot;</code> represents the higher course in course elements of
+group B and out of course elements of groups D and a1.
+</p>
+<p>The group names are presented in the conventional order. For major the groups containing
+in course, tenors together elements appear first, in alphabetical order; followed by those
+all of whose tenors together elements are out of course, in alphabetical order; finally
+followed by those all of whose elements are tenors parted. For higher stages the capital
+letter groups in each half of the string come first, in alphabetical order, followed by
+those with lower case names. Note that a lower case name can never appear before the
+solidus.
+</p>
+<p>Signals a <code class="code">type-error</code> if any of the arguments are not sequences or <code class="code">hash-set</code>s,
+or if any of their elements is not an <code class="code">fch-group</code>. Signals a
+<code class="code">mixed-stage-fch-groups-error</code> if some of the elements are major and some are higher
+stage <code class="code">fch-group</code>s.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (fch-groups-string (list (fch-group &quot;a&quot;) (fch-group &quot;B&quot;)))
+   &rArr; &quot;Ba&quot;
+ (fch-groups-string #((fch-group &quot;D&quot; t t)
+                      (fch-group &quot;a1&quot; t t))
+                    (hash-set (fch-group &quot;B&quot; t)))
+   &rArr; &quot;B/Da1&quot;
+ (fch-groups-string (list (fch-group &quot;T&quot; t nil)))
+   &rArr; &quot;T/&quot;
+ (fch-groups-string (list (fch-group &quot;T&quot; t t)))
+   &rArr; &quot;/T&quot;
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="method_002dfalseness"></a><a class="index-entry-id" id="index-method_002dfalseness"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dfalseness-1"><span class="category-def">Function: </span><span><strong class="def-name">method-falseness</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dfalseness-1"> &para;</a></span></dt>
+<dd><p>Computes the most commonly considered kinds of internal falseness of the most common
+methods: those at even stages major or higher with a single hunt bell, the treble, and all
+the working bells forming one cycle, that is, not differential. Falseness is only
+considered with the treble fixed, as whole leads, and, for stages royal and above, with
+the seventh (that is, the bell roan denotes by <code class="code">6</code>) and above fixed. Returns three
+values: a summary of the courses that are false; for methods that have Plain Bob lead ends
+and lead heads and the usual palindromic symmetry, the false course head groups that are
+present; and a description of the incidence of falseness.
+</p>
+<p>The first value is a list of course heads, <code class="code">row</code>s that have the treble and tenors
+fixed, such that the plain course is false against the courses starting with any of these
+course heads. Rounds is included only if the falseness occurs between rows at two
+different positions within the plain course. Course heads for major have just the
+tenor (that is, the bell represented in Roan by the integer <code class="code">7</code>) fixed, while course
+heads for higher stages have all of the seventh and above (that is, bells represented in
+Roan by the integers <code class="code">6</code> and larger) fixed in their rounds positions.
+</p>
+<p>If <var class="var">method</var> has Plain Bob lead ends and lead heads, and the usual palindromic
+symmetry, the second value returned is a list of <code class="code">fch-group</code> objects, and otherwise
+the second value is <code class="code">nil</code>. Note also that for methods that are completely clean in
+the context used by this function, for example plain royal methods, an empty list also
+will be returned. These two cases can be disambiguated by examining the first value
+returned.
+</p>
+<p>There is some ambiguity in the interpretation of &ldquo;A&rdquo; falseness. In Roan a method is
+only said to have &ldquo;A&rdquo; falseness if its plain course is false. That is, the trivial
+falseness implied by a course being false against itself and against its reverse by
+virtue of containing exactly the same rows is not reported as &ldquo;A&rdquo; falseness. &ldquo;A&rdquo;
+falseness is only reported if there is some further, not-trivial falseness between rows
+at two different positions within the plain course.
+</p>
+<p>The third value returned is a two dimensional, square array, each of the elements of that
+array being a possibly empty list of course heads. For element <var class="var">e</var>, the list at
+<var class="var">m</var>,<var class="var">n</var> of this array, lead <var class="var">m</var> of the plain course of <var class="var">method</var> is false
+against lead <var class="var">n</var> of each of the courses starting with an element of <var class="var">e</var>. The leads
+are counted starting with zero. That is, if <var class="var">s</var> is the stage of <var class="var">method</var>, then
+02264&#774;<var class="var">m</var>&lt;<var class="var">s</var>-1 and 02264&#774;<var class="var">n</var>&lt;<var class="var">s</var>-1.
+</p>
+<p>A <code class="code">type-error</code> is signaled if <var class="var">method</var> is not a <code class="code">method</code>. Signals a
+<code class="code">parse-error</code> if the place notation string cannot be properly parsed as place
+notation at <var class="var">method</var>&rsquo;s stage. If <var class="var">method</var> does not have its stage or
+place-notation set a <code class="code">no-place-notation-error</code>. If <var class="var">method</var> is not at an even
+stage major or above, does not have one hunt bell, the treble, or is differential, an
+<code class="code">inappropriate-method-error</code> is signaled.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (multiple-value-bind (ignore1 groups ignore2)
+     (method-falseness
+       (method :stage 8
+               :place-notation &quot;x34x4.5x5.36x34x3.2x6.3,8&quot;))
+   (declare (ignore ignore1 ignore2)
+   (fch-groups-string groups))
+     &rArr; &quot;BDacZ&quot;
+ (fch-groups-string
+   (second
+     (multiple-value-list
+       (method-falseness
+         (lookup-method &quot;Zorin Surprise&quot; 10)))))
+    &rArr; &quot;T/BDa1c&quot;
+</pre></div></div>
+</dd></dl>
+
+
+
+<a class="index-entry-id" id="index-calls"></a>
+<a class="index-entry-id" id="index-immutable-1"></a>
+<a class="index-entry-id" id="index-bob"></a>
+<a class="index-entry-id" id="index-single"></a>
+<a class="index-entry-id" id="index-variations_002c-doubles"></a>
+<a class="index-entry-id" id="index-doubles-variations"></a>
+</div>
+<hr>
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="Calls.html" rel="next">Calls</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="Methods.html#Methods" rel="prev">Methods</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+
+
+
+</body>
+</html>

@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.3, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is documentation of Roan, version 9.0.29.
+
+This documentation is copyright © 2015-2026 Donald F Morrison.
+
+Copying and distribution of this documentation, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved. -->
+<title>Methods (Roan 9.0.29)</title>
+
+<meta name="description" content="Methods (Roan 9.0.29)">
+<meta name="keywords" content="Methods (Roan 9.0.29)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Documentation-Index.html" rel="index" title="Documentation Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html" rel="up" title="Top">
+<link href="Falseness.html" rel="next" title="Falseness">
+<link href="Patterns.html#Patterns" rel="prev" title="Patterns">
+<style type="text/css">
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+dt.def-line {font-size: 1rem}
+span:hover a.copiable-link {visibility: visible}
+strong.def-name {font-family: monospace; font-weight: bold}
+ul.mark-bullet {list-style-type: disc}
+body {
+    max-width: 44em;
+    margin-left: 2em;
+    background-color: white;
+}
+
+</style>
+
+
+</head>
+
+<body>
+<div class="chapter-level-extent" id="Methods">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="Falseness.html" rel="next">Internal Falseness</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="Patterns.html#Patterns" rel="prev">Patterns</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h2 class="chapter" id="Methods-1"><span>5 Methods<a class="copiable-link" href="#Methods-1"> &para;</a></span></h2>
+
+<p>Roan provides the <code class="code">method</code> type to describe change ringing methods, not to be
+confused with CLOS methods. A <code class="code">method</code> can only describe what the Central Council of
+Church Bell Ringers <a class="url" href="https://framework.cccbr.org.uk">Framework for Method Ringing</a> (FMR)
+calls a static method, a method that can be viewed as a fixed sequence of changes,
+including jump changes; while this includes nearly all methods rung and named to date, it
+does exclude, for example, Dixonoids. A <code class="code">method</code> has a name, a stage, classification
+details, and an associated place-notation, though any or all of these may be <code class="code">nil</code>.
+In the case of the stage or place notation <code class="code">nil</code> indicates that the corresponding
+value is not known; the same is also true if the name is <code class="code">nil</code>, except for the case
+of Little Bob, which in the taxonomy of the FMR has no name. The stage, if known, should
+be a <code class="code">stage</code>, and the name and place notation, if known, should be strings.
+</p>
+<p>The classification follows the taxonomy in the FMR and consists of a <code class="code">class</code> and
+three boolean attributes for jump methods, differential methods and little methods. The
+<code class="code">class</code> may be <code class="code">nil</code>, for principles and pure differentials; one of the keywords
+<code class="code">:bob</code>, <code class="code">:place</code>, <code class="code">:surprise</code>, <code class="code">:delight</code>, <code class="code">:treble-bob</code>,
+<code class="code">:alliance</code>, <code class="code">:treble-place</code> or<code class="code">:hybrid</code>, naming the corresponding class;
+or <code class="code">:hunt</code> indicating a method with one or more hunt bells that does not fall into
+any of the named classes, which can only apply to jump methods. The classification
+consists merely of details stored in the <code class="code">method</code> object, and does not necessary
+correspond to the actual classification of the method described by the
+<code class="code">place-notation</code>, if supplied. The classification can be set to match the place
+notation by calling <code class="code">classify-method</code>.
+</p>
+<p>Similarly the name does not necessarily correspond to the name by which the place notation
+is known, unless the <code class="code">method</code> has been looked up from a suitable library.
+See <a class="xref" href="#Methods-library">Methods library</a>.
+</p>
+<p>Because ringing methods and their classes are unrelated to CLOS methods and classes, the
+<code class="code">roan</code> package shadows the symbols <code class="code">common-lisp:method</code>,
+<code class="code">common-lisp:method-name</code> and <code class="code">common-lisp:class-name</code>.
+<a class="anchor" id="method_002dtype"></a><a class="index-entry-id" id="index-method"></a>
+</p><dl class="first-deftp def-block">
+<dt class="deftp def-line" id="index-method-3"><span class="category-def">Type: </span><span><strong class="def-name">method</strong><a class="copiable-link" href="#index-method-3"> &para;</a></span></dt>
+<dd><p>Describes a change ringing method, typically including its name, stage, classification and
+place notation.
+</p></dd></dl>
+<a class="anchor" id="method"></a><a class="index-entry-id" id="index-method-1"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method-2"><span class="category-def">Function: </span><span><strong class="def-name">method</strong> <var class="def-var-arguments">&amp;key name jump differential little class stage place-notation</var><a class="copiable-link" href="#index-method-2"> &para;</a></span></dt>
+<dd><p>Creates a new <code class="code">method</code> instance, with the specified <var class="var">name</var>, <var class="var">stage</var>,
+<var class="var">classification</var> and <var class="var">place-notation</var>.
+If <var class="var">stage</var> is not provided, it defaults to
+the current value of <code class="code">*default-stage*</code>; to create a <code class="code">method</code> with no stage
+<code class="code">:stage nil</code> must be explicitly supplied.
+</p>
+<p>A <code class="code">type-error</code> is signaled if <var class="var">stage</var> is supplied and is neither <code class="code">nil</code> nor a
+<code class="code">stage</code>; if either of <var class="var">name</var> or <var class="var">place-notation</var> are supplied and are neither
+<code class="code">nil</code> nor a string; or if <code class="code">class</code> is supplied and is neither <code class="code">nil</code> nor one
+of the keywords <code class="code">:bob</code>, <code class="code">:place</code>, <code class="code">:surprise</code>, <code class="code">:delight</code>,
+<code class="code">:treble-bob</code>, <code class="code">:alliance</code>, <code class="code">:treble-place</code>, <code class="code">:hybrid</code> or <code class="code">:hunt</code>.
+A <code class="code">inconsistent-method-specification-error</code> is signaled if the various classification
+details cannot occur together, such as a little principle.
+</p></dd></dl>
+
+<a class="anchor" id="method_002dstage_002dfunction"></a><a class="anchor" id="method_002dname_002dfunction"></a><a class="anchor" id="method_002dplace_002dnotation_002dfunction"></a><dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dname"><span class="category-def">Function: </span><span><strong class="def-name">method-name</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dname"> &para;</a></span></dt>
+<dt class="deffnx def-cmd-deffn def-line" id="index-method_002djump_002dp"><span class="category-def">Function: </span><span><strong class="def-name">method-jump-p</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002djump_002dp"> &para;</a></span></dt>
+<dt class="deffnx def-cmd-deffn def-line" id="index-method_002ddifferential_002dp"><span class="category-def">Function: </span><span><strong class="def-name">method-differential-p</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002ddifferential_002dp"> &para;</a></span></dt>
+<dt class="deffnx def-cmd-deffn def-line" id="index-method_002dlittle_002dp"><span class="category-def">Function: </span><span><strong class="def-name">method-little-p</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dlittle_002dp"> &para;</a></span></dt>
+<dt class="deffnx def-cmd-deffn def-line" id="index-method_002dclass"><span class="category-def">Function: </span><span><strong class="def-name">method-class</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dclass"> &para;</a></span></dt>
+<dt class="deffnx def-cmd-deffn def-line" id="index-method_002dstage"><span class="category-def">Function: </span><span><strong class="def-name">method-stage</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dstage"> &para;</a></span></dt>
+<dt class="deffnx def-cmd-deffn def-line" id="index-method_002dplace_002dnotation"><span class="category-def">Function: </span><span><strong class="def-name">method-place-notation</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dplace_002dnotation"> &para;</a></span></dt>
+<dd><p>Return the name, classification details, stage and place notation of <var class="var">method</var>, or
+<code class="code">nil</code>. A non-nil value returned by <code class="code">method-name</code> or <code class="code">method-place-notation</code>
+is a string; by <code class="code">method-stage</code> a <code class="code">stage</code> (that is, an integer); and by
+<code class="code">method-class</code> one of the keywords <code class="code">:bob</code>, <code class="code">:place</code>, <code class="code">:surprise</code>,
+<code class="code">:delight</code>, <code class="code">:treble-bob</code>, <code class="code">:alliance</code>, <code class="code">:treble-place</code>,<code class="code">:hybrid</code>,
+or <code class="code">:hunt</code>. The predicates <code class="code">method-jump-p</code>, <code class="code">method-differential-p</code> and
+<code class="code">method-little-p</code> return generalized booleans.
+These functions all signal a <code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>.
+</p>
+<p>Note that <code class="code">method-jump-p</code> reflects the classification stored in <var class="var">method</var>, while
+<code class="code">method-contains-jump-changes-p</code> reflects the place notation of <var class="var">method</var>, and
+they may not agree.
+</p>
+<p>All these functions may be used with <code class="code">setf</code> to set the relevant attributes of
+<var class="var">method</var>. No checking is done that the string supplied as the
+<code class="code">method-place-notation</code> is, in fact, valid place notation; however, a subsequent
+attempt to use invalid place notation, for example by <code class="code">method-changes</code> or
+<code class="code">method-lead-head</code>, will signal an error. Attempting to set the name or place
+notation to anything but a string or <code class="code">nil</code>, the class to anything but <code class="code">nil</code> or
+one of the appropriate keywords, or the stage to anything but a <code class="code">stage</code> or <code class="code">nil</code>
+signals a <code class="code">type-error</code>.
+See <a class="xref" href="#method_002dcontains_002djump_002dchanges_002dp">method-contains-jump-changes-p</a>
+</p></dd></dl>
+
+<a class="anchor" id="copy_002dmethod"></a><a class="index-entry-id" id="index-copy_002dmethod"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-copy_002dmethod-1"><span class="category-def">Function: </span><span><strong class="def-name">copy-method</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-copy_002dmethod-1"> &para;</a></span></dt>
+<dd><p>Returns a new <code class="code">method</code> whose name and place notation are <code class="code">equal</code> to those
+of <var class="var">method</var>, and with the same classification as <var class="var">method</var>. Signals a
+<code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>.
+</p></dd></dl>
+
+<a class="anchor" id="method_002dtitle"></a><a class="index-entry-id" id="index-method_002dtitle"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dtitle-1"><span class="category-def">Function: </span><span><strong class="def-name">method-title</strong> <var class="def-var-arguments">method &amp;optional show-unknown</var><a class="copiable-link" href="#index-method_002dtitle-1"> &para;</a></span></dt>
+<dd><p>Returns a string containing as much of the <var class="var">method</var>&rsquo;s title as is known. If
+<var class="var">show-unknown</var>, a generalized boolean defaulting to false, is true then an unknown
+name is described as &quot;Unknown&quot;, and otherwise is simply omitted. Signals a
+<code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>.
+</p>
+<p>The one argument case can be used with <code class="code">setf</code>, in which case it potentially sets any
+or all of the name, classification and stage of <var class="var">method</var>. There is an ambiguity when
+parsing method titles in that there being no explicit class named can indicate with that
+the method has no class (principles and pure differentials) or that the class is Hybrid.
+When parsing titles for <code class="code">setf</code> an absence of a class name is taken to mean that there
+is no class. Also, if there is no stage name specified when using <code class="code">setf</code> with
+<code class="code">method-title</code> the stage is set to <code class="code">nil</code>; <code class="code">*default-stage*</code> is not
+consulted.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-title (method &quot;Advent&quot; :class :surprise :stage 8))
+   &rArr; &quot;Advent Surprise Major&quot;
+ (method-title (method :name &quot;Grandsire&quot; :class :bob :stage 9))
+   &rArr; &quot;Grandsire Caters&quot;
+ (method-title (method :stage 8))
+   &rArr; &quot;Major&quot;
+ (method-title (method :class :delight :stage 8) t)
+   &rArr; &quot;Unknown Delight Major
+ (method-title (method :name &quot;Advent&quot; :class :surprise :stage nil))
+   &rArr; &quot;Advent Surprise&quot;
+ (method-title (method :name &quot;Slinky&quot; :stage 12 :class :place
+                       :little t :differential t))
+   &rArr; &quot;Slinky Differential Little Place Maximimus&quot;
+ (method-title (method :name &quot;Stedman&quot; :stage 11))
+   &rArr; &quot;Stedman Cinques&quot;
+ (method-title (method :name &quot;Meson&quot; :class :hybrid
+                       :little t :stage 12))
+   &rArr; &quot;Meson Maximus&quot;
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="method_002dfrom_002dtitle"></a><a class="index-entry-id" id="index-method_002dfrom_002dtitle"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dfrom_002dtitle-1"><span class="category-def">Function: </span><span><strong class="def-name">method-from-title</strong> <var class="def-var-arguments">title &amp;optional place-notation</var><a class="copiable-link" href="#index-method_002dfrom_002dtitle-1"> &para;</a></span></dt>
+<dd><p>Creates a new <code class="code">method</code> instance, with its name, classification and stage
+as specified by <var class="var">title</var>, and with the given <var class="var">place-notation</var>.
+If the title does not include a stage name, the stage of the result is the current value
+of <code class="code">*default-stage*</code>.
+</p>
+<p>Note that it is not possible to distinguish hybrid methods from non-jump principles, nor
+jump methods with hunt bells from those without, from their titles. By convention, if no
+hunt bell class is specified in <var class="var">title</var> a principle, that is a method without hunt
+bells, is assumed. If in some specific use this is not correct it can be corrected by
+setting <code class="code">method-class</code>, and possibly <code class="code">method-little-p</code>, of the resulting method
+as desired.
+</p>
+<p>A <code class="code">type-error</code> is signaled if <var class="var">title</var> is not a string, or if <var class="var">place-notation</var>
+is neither a string nor <code class="code">nil</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (let ((m (method-from-title &quot;Advent Surprise Major&quot;)))
+   (list (method-title m) (method-class m) (method-stage m)))
+   &rArr; (&quot;Advent&quot; :surprise 8)
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="comparable_002dmethod_002dname"></a><a class="index-entry-id" id="index-comparable_002dmethod_002dname"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-comparable_002dmethod_002dname-1"><span class="category-def">Function: </span><span><strong class="def-name">comparable-method-name</strong> <var class="def-var-arguments">string</var><a class="copiable-link" href="#index-comparable_002dmethod_002dname-1"> &para;</a></span></dt>
+<dd><p>If <var class="var">string</var> is a suitable name for a method, returns a version appropriate for
+comparison with other comparable names, and otherwise returns <code class="code">nil</code>.
+</p>
+<p>The Central Council of Church Bell Ringers
+<a class="url" href="https://framework.cccbr.org.uk">Framework for Method
+Ringing</a> (FMR), appendix B describes a syntax for method names and their comparisons. This
+function both determines whether or not they fit within the syntax described by the FMR,
+and, if so, provides a canonical representation for them suitable for comparing whether or
+not two apparently different names will be considered the same when describing a method.
+This comparable representation is not intended for presentation to end users, but
+rather just for comparing names for equivalence.
+</p>
+<p>Signals a <code class="code">type-error</code> if <var class="var">string</var> is not a string.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (comparable-method-name &quot;New Cambridge&quot;)
+   &rArr; &quot;new cambridge&quot;
+ (comparable-method-name &quot;London No.3&quot;)
+   &rArr; &quot;london no 3&quot;
+ (comparable-method-name &quot;m&#x00E4;k&#x010D;e&#x0148; E=mc&#x00B2;&quot;)
+   &rArr; &quot;makcen e mc2&quot;
+ (comparable-method-name &quot;Two is Too  Many Spaces&quot;)
+   &rArr; nil
+ (comparable-method-name &quot;&#x0395;&#x03BB;&#x03BB;&#x03B7;&#x03BD;&#x03B9;&#x03BA;&#x03AC; is Greek to me&quot;)
+   &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="inconsistent_002dmethod_002dspecification_002derror_002dtype"></a><a class="index-entry-id" id="index-inconsistent_002dmethod_002dspecification_002derror"></a>
+<dl class="first-deftp def-block">
+<dt class="deftp def-line" id="index-inconsistent_002dmethod_002dspecification_002derror-1"><span class="category-def">Type: </span><span><strong class="def-name">inconsistent-method-specification-error</strong><a class="copiable-link" href="#index-inconsistent_002dmethod_002dspecification_002derror-1"> &para;</a></span></dt>
+<dd><p>Signaled in circumstances when the various classification details
+provided cannot occur together, such as a little principle.
+</p></dd></dl>
+
+<a class="index-entry-id" id="index-Central-Council"></a>
+<a class="index-entry-id" id="index-CCCBR"></a>
+<a class="index-entry-id" id="index-FMR"></a>
+<a class="index-entry-id" id="index-Framework"></a>
+<a class="index-entry-id" id="index-methods"></a>
+<a class="index-entry-id" id="index-place-notation-1"></a>
+<a class="index-entry-id" id="index-library-1"></a>
+<a class="index-entry-id" id="index-lookup"></a>
+<a class="index-entry-id" id="index-query"></a>
+<a class="index-entry-id" id="index-library-2"></a>
+<ul class="mini-toc">
+<li><a href="#Methods-library">Methods library</a></li>
+<li><a href="#Functions-of-the-place-notation-of-methods">Functions of the place notation of methods</a></li>
+<li><a href="#Drawing-blue-lines">Drawing blue lines</a></li>
+</ul>
+<hr>
+<div class="section-level-extent" id="Methods-library">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Methods" rel="up">Methods</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="Methods-library-1"><span>5.1 Methods library<a class="copiable-link" href="#Methods-library-1"> &para;</a></span></h3>
+
+<p>Roan provides a library of method definitions, derived from the
+<a class="url" href="https://methods.cccbr.org.uk">Central Council Methods Library</a>.
+These are augmented with a handful of other methods not yet in
+the Council&rsquo;s library, jump methods and common alternative names for a few
+methods (<a class="ref" href="#lookup_002dmethod_002dinfo">lookup-method-info</a>). As delivered with Roan this library is only up to
+date as of the date a version of Roan was released. However, if a network connection is
+available, the library can be updated to the most recent version made available by the
+Council by using <code class="code">update-method-library</code>. The Council typically updates their library
+weekly.
+</p>
+<p>The library can be interrogated with the <code class="code">lookup-methods</code>,
+<code class="code">lookup-method-by-title</code> and <code class="code">lookup-methods-by-notation</code> functions.
+Additional information such as dates and places of first peals containing the methods
+is available for some of the methods using <code class="code">lookup-method-info</code>.
+<a class="anchor" id="lookup_002dmethods"></a><a class="index-entry-id" id="index-lookup_002dmethods"></a>
+</p><dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-lookup_002dmethods-1"><span class="category-def">Function: </span><span><strong class="def-name">lookup-methods</strong> <var class="def-var-arguments">&amp;key name jump differential little class stage</var><a class="copiable-link" href="#index-lookup_002dmethods-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-lookup_002dmethod_002dby_002dtitle"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-lookup_002dmethod_002dby_002dtitle-1"><span class="category-def">Function: </span><span><strong class="def-name">lookup-method-by-title</strong> <var class="def-var-arguments">title &amp;optional errorp</var><a class="copiable-link" href="#index-lookup_002dmethod_002dby_002dtitle-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-lookup_002dmethods_002dby_002dnotation"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-lookup_002dmethods_002dby_002dnotation-1"><span class="category-def">Function: </span><span><strong class="def-name">lookup-methods-by-notation</strong> <var class="def-var-arguments">notation-or-changes &amp;optional stage</var><a class="copiable-link" href="#index-lookup_002dmethods_002dby_002dnotation-1"> &para;</a></span></dt>
+<dd><p>The <code class="code">lookup-methods</code> function returns a list of named <code class="code">method</code>s whose name,
+classification and/or stage match those provided. If only a subset of these properties
+are provided, the return list will contain all known methods that have the provided
+ones.
+</p>
+<p>If <var class="var">name</var> is provided, it should be a string or <code class="code">nil</code>, and all the methods
+returned will have that name. The Central Council of Church Bell Ringers
+<a class="url" href="https://cccbr.github.io/method_ringing_framework/">Framework for Method
+Ringing</a> (FMR), appendix B defines the form method names may take, and a mechanism for
+comparing them that is more complex than simply comparing strings for equality. For
+example, <code class="code">&quot;London No.3&quot;</code> and <code class="code">&quot;London no 3&quot;</code> are considered the same names.
+The <code class="code">lookup-methods</code> function uses this mechanism. See <a class="xref" href="#comparable_002dmethod_002dname">comparable-method-name</a>.
+</p>
+<p>The <var class="var">name</var> may also contain &lsquo;<samp class="samp">*</samp>&rsquo; wildcard characters. Such a wildcard matches a
+series of zero or more consecutive characters. Since the &lsquo;<samp class="samp">*</samp>&rsquo; is not a character
+allowed in method names by the FMR there is no ambiguity: occurrences of &lsquo;<samp class="samp">*</samp>&rsquo; in
+<var class="var">name</var> are always wildcard characters. Wildcards are applicable only to <var class="var">name</var>,
+and not to any of the other arguments to <code class="code">lookup-methods</code>.
+</p>
+<p>If <var class="var">stage</var> is provided, it should be a <code class="code">stage</code>, that is a small integer. All the
+methods that are returned will have that stage. While a <code class="code">method</code> object can have
+an indeterminate stage, represented by <code class="code">nil</code>, all the methods returned by
+<code class="code">lookup-methods</code> will have a definite stage, and <code class="code">nil</code> is not an allowed
+value for the <var class="var">stage</var> argument.
+</p>
+<p>If <var class="var">class</var> is provided, it should be <code class="code">nil</code> or one of the keywords <code class="code">:bob</code>,
+<code class="code">:place</code>, <code class="code">:surprise</code>, <code class="code">:delight</code>, <code class="code">:treble-bob</code>,
+<code class="code">:treble-place</code>, <code class="code">:alliance</code>, <code class="code">:hybrid</code>, <code class="code">hunt</code> or <code class="code">:blank</code>. With
+the exception of <code class="code">:blank</code>, all the methods returned will have the specified class.
+The value <code class="code">:blank</code> matches either <code class="code">nil</code>, meaning no explicit class, or
+<code class="code">:hybrid</code>; when writing a method&rsquo;s title according to the FMR the hybrid class and no
+class are indistinguishable, since &ldquo;hybrid&rdquo; is not included in the title.
+</p>
+<p>If supplied, the generalized booleans <var class="var">little</var>, <var class="var">differential</var> and <var class="var">jump</var>
+indicate that the returned methods should or should not have these properties. If these
+parameters are not supplied all otherwise matching methods in the library will be returned
+without regard to whether or not they have these properties.
+</p>
+<p>If the title of a method is known, it can be found in the library by using
+<code class="code">lookup-method-by-title</code>. The <var class="var">title</var> should be a string. If a <code class="code">method</code> with
+that title is in the library, it is returned. Otherwise <code class="code">nil</code> is returned, unless the
+generalized Boolean <var class="var">errorp</var> it true (it is false by default), in which case an error
+is signaled. In general there should never be two or more different methods in the library
+with the same title. Matching on the title is done using the FMR&rsquo;s mechanism for comparing
+names. Wildcards cannot be used with <code class="code">lookup-method-by-title</code>.
+</p>
+<p>If the place notation of a method is known, and its name in the library is sought,
+<code class="code">lookup-methods-by-notation</code> is available. The <var class="var">notation-or-changes</var> should
+be either a string, in which case it viewed as place notation, or a list of <code class="code">rows</code>,
+representing changes all of the same stage. The <var class="var">stage</var> should be a <code class="code">stage</code>; if
+not provided or <code class="code">nil</code> the current value of <code class="code">*default-stage*</code> is used. If
+<var class="var">notation-or-changes</var> is a list of changes, the value of <var class="var">stage</var> is ignored,
+the stage of those changes being used instead. Two lists are returned. The first is of
+methods that have the provided place notation (or corresponding changes). The second is of
+methods that are rotations of methods with the given place notation. Either or both lists
+may be empty if no suitable methods are found in the library.
+</p>
+<p>There is no guarantee of what order methods are in the lists returned by
+<code class="code">lookup-methods</code> or <code class="code">lookup-methods-by-notation</code>. Instances of the &ldquo;same&rdquo;
+method returned by different invocations of these functions will typically not be
+<code class="code">eq</code>.
+</p>
+<p>A <code class="code">type-error</code> is signaled if <var class="var">stage</var> is not a <code class="code">stage</code> (or, in the case of
+<code class="code">lookup-methods-by-notation</code>, <code class="code">nil</code>); <var class="var">name</var> is not a string or <code class="code">nil</code>;
+<var class="var">notation-or-changes</var> is neither a string nor a non-empty list of <code class="code">row</code>s;
+<var class="var">changes</var> is not a non-empty list of <code class="code">row</code>s; or if <var class="var">class</var> is not one the
+allowed values. A <code class="code">parse-error</code> is signaled if <var class="var">notation-or-changes</var> is a string
+and is not parseable as place notation at <var class="var">stage</var>. An <code class="code">error</code> is signaled if
+<var class="var">changes</var> is a list of <code class="code">row</code>s, but they are not all of stage <var class="var">stage</var> (or of
+<code class="code">*default-stage*</code> if <var class="var">stage</var> is <code class="code">nil</code>). A <code class="code">method-library-error</code> is
+signaled if the method library file cannot be read or is of the wrong format.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (mapcar #'method-place-notation
+         (lookup-methods :name &quot;Advent&quot;
+                         :class :surprise
+                         :stage 8))
+     &rArr; (&quot;36x56.4.5x5.6x4x5x4x7,8&quot;)
+ (mapcar #'method-title
+         (lookup-methods :name &quot;london no 3&quot;
+                         :class :surprise
+                         :stage 10))
+     &rArr; (&quot;London No.3 Surprise Royal&quot;)
+ (method-place-notation
+   (lookup-method-by-title &quot;Advent Surprise Major&quot;))
+     &rArr; &quot;36x56.4.5x5.6x4x5x4x7,8&quot;
+ (lookup-methods :name &quot;No such method&quot;)
+     &rArr; nil
+</pre></div><div class="group"><pre class="example-preformatted"> (mapcar #'method-title
+         (lookup-methods :name &quot;Cambridge*&quot;
+                         :class :surprise
+                         :stage 8))
+     &rArr; (&quot;Cambridge Blue Surprise Major&quot;
+                &quot;Cambridge Surprise Major&quot;
+                &quot;Cambridgeshire Surprise Major&quot;)
+</pre></div><div class="group"><pre class="example-preformatted"> (multiple-value-bind (n r)
+     (lookup-methods-by-notation &quot;36x56.4.5x5.6x4x5x4x7,8&quot; 8)
+       (list
+         (mapcar #'method-title n)
+         (mapcar #'method-title r)))
+     &rArr; ((&quot;Advent Surprise Major&quot;) nil)
+ (multiple-value-bind (n r)
+     (lookup-methods-by-notation &quot;1.3&quot; 3)
+       (list
+         (mapcar #'method-title n)
+         (mapcar #'method-title r)))
+     &rArr; ((&quot;Reverse Original Singles&quot;)
+                (&quot;Original Singles&quot;))
+ (method-place-notation
+   (lookup-method-by-title &quot;Original Singles&quot;))
+     &rArr; &quot;3.1&quot;
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="lookup_002dmethod_002dinfo"></a><a class="index-entry-id" id="index-lookup_002dmethod_002dinfo"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-lookup_002dmethod_002dinfo-1"><span class="category-def">Function: </span><span><strong class="def-name">lookup-method-info</strong> <var class="def-var-arguments">title-or-method key</var><a class="copiable-link" href="#index-lookup_002dmethod_002dinfo-1"> &para;</a></span></dt>
+<dd><p>Roan&rsquo;s method library also stores metadata about many of the methods it contains. Each
+kind of such metadata is described by a keyword, which is passed to this function as
+<var class="var">key</var>. The <var class="var">title-or-method</var> may be a string or a <code class="code">method</code>. If a string, it
+is the title of the method about which the metadata is sought. If the metadata indicated
+by <var class="var">key</var> is available for the method it is returned; the type of the return value
+depends upon the kind of metadata sought. If no such metadata is available, including
+if <var class="var">key</var> is a not yet supported type of metadata or if <code class="code">title-or-method</code> does
+not correspond to any method in the library, <code class="code">nil</code> is returned.
+</p>
+<p>Currently supported values for <var class="var">key</var> are
+</p><dl class="table">
+<dt><code class="code">:first-towerbell-peal</code></dt>
+<dd><p>Returns a string describing the first performance of the method on tower bells. No
+distinction if made between ringing the method on its own or ringing it in spliced.
+</p>
+</dd>
+<dt><code class="code">:first-handbell-peal</code></dt>
+<dd><p>Returns a string describing the first performance of the method on hand bells. No
+distinction if made between ringing the method on its own or ringing it in spliced.
+</p>
+</dd>
+<dt><code class="code">:complib-id</code></dt>
+<dd><p>Returns an integer, which is used to index information about the method on
+<a class="url" href="https://complib.org/">Composition Library</a>. This can also be used to distinguish those
+methods added to those from the Central Council, as the added methods do not have a
+<code class="code">:complib-id</code>, while all those from the Council do.
+</p></dd>
+</dl>
+<p>Other <var class="var">key</var> values may be added in future versions of Roan.
+</p>
+<p>Signals a <code class="code">type-error</code> if <var class="var">title-or-method</var> is neither a string nor a
+<code class="code">method</code>, or if <var class="var">key</var> is not a keyword.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (lookup-method-info &quot;Advent Surprise Major&quot;
+                     :first-towerbell-peal)
+     &rArr; &quot;1988-07-31 Boston, MA (Advent)&quot;
+ (lookup-method-info
+   (first (lookup-methods-by-notation &quot;36x56.4.5x5.6x4x5x4x7,8&quot;))
+   :complib-id)
+     &rArr; 20042
+ (lookup-method-info &quot;Advent Surprise Major&quot;
+                     :no-such-info)
+     &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="update_002dmethod_002dlibrary"></a><a class="index-entry-id" id="index-update_002dmethod_002dlibrary"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-update_002dmethod_002dlibrary-1"><span class="category-def">Function: </span><span><strong class="def-name">update-method-library</strong> <var class="def-var-arguments">&amp;optional force</var><a class="copiable-link" href="#index-update_002dmethod_002dlibrary-1"> &para;</a></span></dt>
+<dd><p>Queries the remote server containing the Central Council Method Library. If that remote
+file has changed since the one Roan&rsquo;s library was built from was downloaded, it fetches
+the new one and uses it to build an updated Roan method library. If the generalized
+boolean <var class="var">force</var> is true it fetches the remote file and rebuilds Roan&rsquo;s library
+without regard to whether the remote one has changed. If the library is updated, returns
+an integer, the number of methods the updated library contains; if the library is not
+updated because the remote version hasn&rsquo;t changed returns <code class="code">nil</code>.
+</p>
+<p>May signal any of a variety of file system or network errors if network access is not
+available, or unreliable, or if there are other difficulties downloading and processing
+the remote file.
+</p></dd></dl>
+<a class="anchor" id="method_002dlibrary_002ddetails"></a><a class="index-entry-id" id="index-method_002dlibrary_002ddetails"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dlibrary_002ddetails-1"><span class="category-def">Function: </span><span><strong class="def-name">method-library-details</strong><a class="copiable-link" href="#index-method_002dlibrary_002ddetails-1"> &para;</a></span></dt>
+<dd><p>Returns eight values describing the current Roan method libary. All are strings. They
+are:
+</p><ol class="enumerate">
+<li> A description of the CCCBR Method Library, extracted from the file from which the Roan
+library was constructed
+
+</li><li> The date and time the file on the remote server was last modified, according to that
+server.
+
+</li><li> The &ldquo;entity tag&rdquo; (ETag) of the remote file, as provided by the server. This is an opaque
+identifier that changes for each version of the remote file. Querying the current Etag is
+how <code class="code">update-method-library</code> decides whether or not the Roan method library needs
+updating.
+
+</li><li> The URL used to fetch the remote file from which the Roan library was built.
+
+</li><li> The <var class="var">source-id</var> provided in the remote file, that is a Central Council library
+version stamp.
+
+</li><li> The date the Council&rsquo;s library was built, according to the contents of the file downloaded
+from the remote server. This may or may not be the same as the date the file on the
+remote server was last modified.
+
+</li><li> A unique identifier for the current version of the Roan library. This will change
+whenever the Roan library is rebuilt, even if the resulting contents are unchanged.
+
+</li><li> The date and time the current version of the Roan library was built.
+</li></ol>
+</dd></dl>
+<a class="anchor" id="method_002dlibrary_002derror_002dtype"></a><a class="index-entry-id" id="index-method_002dlibrary_002derror"></a>
+<dl class="first-deftp def-block">
+<dt class="deftp def-line" id="index-method_002dlibrary_002derror-1"><span class="category-def">Type: </span><span><strong class="def-name">method-library-error</strong><a class="copiable-link" href="#index-method_002dlibrary_002derror-1"> &para;</a></span></dt>
+<dd><p>Signaled when a method library file cannot be read. Contains two
+potentially useful slots accessible with <code class="code">file-error-pathname</code> and
+<code class="code">method-library-error-description</code>.
+</p></dd></dl>
+
+</div>
+<div class="section-level-extent" id="Functions-of-the-place-notation-of-methods">
+<h3 class="section"><span>5.2 Functions of the place notation of methods<a class="copiable-link" href="#Functions-of-the-place-notation-of-methods"> &para;</a></span></h3>
+
+<a class="anchor" id="canonicalize_002dmethod_002dplace_002dnotation"></a><a class="index-entry-id" id="index-canonicalize_002dmethod_002dplace_002dnotation"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-canonicalize_002dmethod_002dplace_002dnotation-1"><span class="category-def">Function: </span><span><strong class="def-name">canonicalize-method-place-notation</strong> <var class="def-var-arguments">method &amp;key comma elide cross upper-case allow-jump-changes</var><a class="copiable-link" href="#index-canonicalize_002dmethod_002dplace_002dnotation-1"> &para;</a></span></dt>
+<dd><p>Replaces <var class="var">method</var>&rsquo;s place-notation by an equivalent string in canonical form, and
+returns that canonical notation as a string. Unless overriden by keyword arguments this is
+a compact version with leading and lying changes elided according to <code class="code">:lead-end</code>
+format as for <code class="code">write-place-notation</code>, partitioned with a comma, if possible, with
+upper case letters for high number bells and a lower case &lsquo;<samp class="samp">x</samp>&rsquo; for cross. The behavior
+can be changed by passing keyword arguments as for <code class="code">write-place-notation</code>. If
+<var class="var">method</var> has no place-notation or no stage, this function does nothing, and returns
+<code class="code">nil</code>; in particular, if there is place-notation but no stage, the place-notation
+will be unchanged.
+</p>
+<p>Signals a <code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>, and signals an error
+if any of the keyword arguments do not have suitable values for passing to
+<code class="code">write-place-notation</code>. Signals a <code class="code">parse-error</code> if the place notation string
+cannot be properly parsed as place notation at <var class="var">method</var>&rsquo;s stage.
+See <a class="xref" href="Fundamental-Types.html#canonicalize_002dplace_002dnotation">canonicalize-place-notation</a> and <a class="ref" href="Fundamental-Types.html#write_002dplace_002dnotation">write-place-notation</a>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (let ((m (method :stage 6
+                  :place-notation &quot;-16.X.14-6X16&quot;)))
+   (canonicalize-method-place-notation m)
+   (method-place-notation m))
+     &rArr; &quot;x1x4,6&quot;
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="method_002dchanges"></a><a class="index-entry-id" id="index-method_002dchanges"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dchanges-1"><span class="category-def">Function: </span><span><strong class="def-name">method-changes</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dchanges-1"> &para;</a></span></dt>
+<dd><p>If <var class="var">method</var>&rsquo;s stage and place-notation have been set returns a fresh list of
+<code class="code">row</code>s, representing changes, that constitute a plain lead of <var class="var">method</var>, and
+otherwise returns <code class="code">nil</code>. Signals a <code class="code">type-error</code> if <var class="var">method</var> is not a
+<code class="code">method</code>. Signals a <code class="code">parse-error</code> if the place notation string cannot be
+properly parsed as place notation at <var class="var">method</var>&rsquo;s stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-changes (method :stage 6
+                         :place-notation &quot;x2,6&quot;))
+     &rArr; (!214365 !124365 !214365 !132546)
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="method_002dcontains_002djump_002dchanges_002dp"></a><a class="index-entry-id" id="index-method_002dcontains_002djump_002dchanges_002dp"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dcontains_002djump_002dchanges_002dp-1"><span class="category-def">Function: </span><span><strong class="def-name">method-contains-jump-changes-p</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dcontains_002djump_002dchanges_002dp-1"> &para;</a></span></dt>
+<dd><p>If <var class="var">method</var>&rsquo;s stage and place-notation have been set and method contains one or
+more jump changes returns true, and otherwise returns <code class="code">nil</code>. Note that even if the
+place notation is set and implies jump changes, if the stage is not set
+<code class="code">method-contains-jump-changes-p</code> will still return <code class="code">nil</code>.
+</p>
+<p>Note that this function reflects the place notation of <var class="var">method</var> while
+<code class="code">method-jump-p</code> reflects the classification stored in the method, and they may not
+agree.
+</p>
+<p>Signals a <code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>. Signals a
+<code class="code">parse-error</code> if the place notation string cannot be properly parsed as place
+notation at <var class="var">method</var>&rsquo;s stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-contains-jump-changes-p
+   (method :place-notation &quot;x3x4x2x3x4x5,2&quot;
+           :stage 6))
+     &rArr; nil
+ (method-contains-jump-changes-p
+   (method :place-notation &quot;x3x(24)x2x(35)x4x5,2&quot;
+           :stage 6))
+     &rArr; t
+ (method-contains-jump-changes-p
+   (method :stage 6))
+     &rArr; nil
+ (method-contains-jump-changes-p
+   (method :place-notation &quot;x3x(24)x2x(35)x4x5,2&quot;
+           :stage nil))
+     &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="method_002dlead_002dhead"></a><a class="index-entry-id" id="index-method_002dlead_002dhead"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dlead_002dhead-1"><span class="category-def">Function: </span><span><strong class="def-name">method-lead-head</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dlead_002dhead-1"> &para;</a></span></dt>
+<dd><p>If <var class="var">method</var>&rsquo;s stage and place-notation have been set returns a <code class="code">row</code>, the lead
+head generated by one plain lead of <var class="var">method</var>, and otherwise <code class="code">nil</code>. If
+<var class="var">method</var> has a one lead plain course the result will be rounds. Signals a
+<code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>. Signals a <code class="code">parse-error</code> if
+the place notation string cannot be properly parsed as place notation at <var class="var">method</var>&rsquo;s
+stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-lead-head (method-from-title &quot;Little Bob Major&quot; &quot;x1x4,2&quot;))
+     &rArr; !16482735
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="method_002dlead_002dcount"></a><a class="index-entry-id" id="index-method_002dlead_002dcount"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dlead_002dcount-1"><span class="category-def">Function: </span><span><strong class="def-name">method-lead-count</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dlead_002dcount-1"> &para;</a></span></dt>
+<dd><p>If <var class="var">method</var>&rsquo;s stage and place-notation have been set returns a positive integer,
+the number of leads in a plain course of <var class="var">method</var>, and otherwise <code class="code">nil</code>. Signals a
+<code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>. Signals a <code class="code">parse-error</code> if
+the place notation string cannot be properly parsed as place notation at <var class="var">method</var>&rsquo;s
+stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-lead-count
+   (method-from-title &quot;Cambridge Surprise Minor&quot;
+                      &quot;x3x4x2x3x4x5,2&quot;))
+     &rArr; 5
+ (method-lead-count
+   (method-from-title &quot;Cromwell Tower Block Surprise Minor&quot;
+                      &quot;3x3.4x2x3x4x3,6&quot;))
+     &rArr; 1
+ (method-lead-count
+   (method-from-title &quot;Bexx Differential Bob Minor&quot;
+                      &quot;x1x1x23,2&quot;))
+     &rArr; 6
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="method_002dplain_002dlead"></a><a class="index-entry-id" id="index-method_002dplain_002dlead"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dplain_002dlead-1"><span class="category-def">Function: </span><span><strong class="def-name">method-plain-lead</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dplain_002dlead-1"> &para;</a></span></dt>
+<dd><p>If <var class="var">method</var>&rsquo;s stage and place-notation have been set returns a fresh list of
+<code class="code">row</code>s, starting with rounds, that constitute the first lead of the plain course of
+<var class="var">method</var>, and otherwise returns <code class="code">nil</code>. The lead head that starts the next lead is
+not included. Signals a <code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>. Signals
+a <code class="code">parse-error</code> if the place notation string cannot be properly parsed as place
+notation at <var class="var">method</var>&rsquo;s stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-plain-lead (method :stage 6
+                            :place-notation &quot;x2,6&quot;))
+     &rArr; (!123456 !214365 !213456 !124365)
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="method_002dlead_002dlength"></a><a class="index-entry-id" id="index-method_002dlead_002dlength"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dlead_002dlength-1"><span class="category-def">Function: </span><span><strong class="def-name">method-lead-length</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dlead_002dlength-1"> &para;</a></span></dt>
+<dd><p>If <var class="var">method</var>&rsquo;s stage and place-notation have been set returns a positive integer,
+the length of one lead of <var class="var">method</var>, and otherwise <code class="code">nil</code>. Signals a
+<code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>. Signals a <code class="code">parse-error</code> if
+the place notation string cannot be properly parsed as place notation at <var class="var">method</var>&rsquo;s
+stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-lead-length
+   (method-from-title &quot;Cambridge Surprise Minor&quot; &quot;x3x4x2x3x4x5,2&quot;))
+     &rArr; 24
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="method_002dcourse_002dlength"></a><a class="index-entry-id" id="index-method_002dcourse_002dlength"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dcourse_002dlength-1"><span class="category-def">Function: </span><span><strong class="def-name">method-course-length</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dcourse_002dlength-1"> &para;</a></span></dt>
+<dd><p>If <var class="var">method</var>&rsquo;s stage and place-notation have been set returns a positive integer,
+the length of a plain course of <var class="var">method</var>, and otherwise <code class="code">nil</code>. Signals a
+<code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>. Signals a <code class="code">parse-error</code> if
+the place notation string cannot be properly parsed as place notation at <var class="var">method</var>&rsquo;s
+stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-course-length
+   (method :title &quot;Cambridge Surprise Minor&quot;
+           :place-notation &quot;x3x4x2x3x4x5,2&quot;))
+     &rArr; 120
+ (method-course-length
+   (method :title &quot;Cromwell Tower Block Minor&quot;
+           :place-notation &quot;3x3.4x2x3x4x3,6&quot;))
+     &rArr; 24
+ (method-course-length
+   (method :title &quot;Bexx Differential Bob Minor&quot;
+           :place-notation &quot;x1x1x23,2&quot;))
+     &rArr; 72
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="method_002dplain_002dcourse"></a><a class="index-entry-id" id="index-method_002dplain_002dcourse"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dplain_002dcourse-1"><span class="category-def">Function: </span><span><strong class="def-name">method-plain-course</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dplain_002dcourse-1"> &para;</a></span></dt>
+<dd><p>If <var class="var">method</var>&rsquo;s stage and place-notation have been set returns a fresh list of the
+<code class="code">row</code>s that constitute a plain course of <var class="var">method</var>, and otherwise <code class="code">nil</code>. The
+list returned will start with rounds, and end with the <code class="code">row</code> immediately preceding the
+final rounds. Signals a <code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>. Signals
+a <code class="code">parse-error</code> if the place notation string cannot be properly parsed as place
+notation at <var class="var">method</var>&rsquo;s stage.
+</p></dd></dl>
+<a class="anchor" id="method_002dtrue_002dplain_002dcourse_002dp"></a><a class="index-entry-id" id="index-method_002dtrue_002dplain_002dcourse_002dp"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dtrue_002dplain_002dcourse_002dp-1"><span class="category-def">Function: </span><span><strong class="def-name">method-true-plain-course-p</strong> <var class="def-var-arguments">method &amp;optional error-if-no-place-notation</var><a class="copiable-link" href="#index-method_002dtrue_002dplain_002dcourse_002dp-1"> &para;</a></span></dt>
+<dd><p>If <var class="var">method</var> has a non-nil stage and place notation set, returns true if
+<var class="var">method</var>&rsquo;s plain course is true and <code class="code">nil</code> otherwise. If <var class="var">method</var> does not
+have a non-nil stage or place notation a <code class="code">no-place-notation-error</code> is signaled if the
+generalized boolean <var class="var">error-if-no-place-notation</var> is true, and otherwise <code class="code">nil</code> is
+returned; if <var class="var">error-if-no-place-notation</var> is not supplied it defaults to true. Signals
+a <code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>. Signals a <code class="code">parse-error</code>
+if the place notation string cannot be properly parsed as place notation at <var class="var">method</var>&rsquo;s
+stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-true-plain-course-p
+   (method :title &quot;Little Bob Minor&quot;
+           :place-notation &quot;x1x4,2&quot;))
+     &rArr; t
+ (method-true-plain-course-p
+   (method :title &quot;Unnamed Little Treble Place Minor&quot;
+           :place-notation &quot;x5x4x2,2&quot;))
+     &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="index-entry-id" id="index-classification"></a>
+<a class="index-entry-id" id="index-Central-Council-1"></a>
+<a class="index-entry-id" id="index-CCCBR-1"></a>
+<a class="index-entry-id" id="index-methods-1"></a>
+<a class="anchor" id="method_002dhunt_002dbells"></a><a class="index-entry-id" id="index-method_002dhunt_002dbells"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dhunt_002dbells-1"><span class="category-def">Function: </span><span><strong class="def-name">method-hunt-bells</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dhunt_002dbells-1"> &para;</a></span></dt>
+<dd><p>If <var class="var">method</var>&rsquo;s stage and place-notation have been set <code class="code">method-hunt-bells</code>
+returns a fresh list of <code class="code">bell</code>s (that is, small integers, with the treble represented
+by zero) that are hunt bells of <var class="var">method</var> (that is, that return to their starting place
+at each lead head), and otherwise returns <code class="code">nil</code>. The bells in the list are ordered in
+increasing numeric order. Note that for a method with no hunt bells this function will
+also return <code class="code">nil</code>.
+</p>
+<p>Signals a <code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>, and signal a
+<code class="code">parse-error</code> if the place notation string cannot be properly parsed as place
+notation at <var class="var">method</var>&rsquo;s stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-hunt-bells (method-from-title &quot;Grandsire Doubles&quot;
+                                       &quot;3,1.5.1.5.1&quot;))
+     &rArr; (0 1)
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="method_002dworking_002dbells"></a><a class="index-entry-id" id="index-method_002dworking_002dbells"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dworking_002dbells-1"><span class="category-def">Function: </span><span><strong class="def-name">method-working-bells</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dworking_002dbells-1"> &para;</a></span></dt>
+<dd><p>If <var class="var">method</var>&rsquo;s stage and place-notation have been set returns a list of lists of
+<code class="code">bell</code>s (that is, small integers, with the treble represented by zero) that are
+working bells of <var class="var">method</var> (that is, that do not return to their starting place at each
+lead head), and otherwise returns <code class="code">nil</code>. The sublists each represent a cycle of
+working bells. For example, for a major method with Plain Bob lead heads, there will be
+one sublist returned, of length seven, containing the bells 1 through 7; while for a
+differential method there will be at least two sublists returned. Each of the sublists is
+ordered starting with the smallest bell in that sublist, and then in the order the place
+bells follow one another in the method. Within the overall, top-level list the sublists
+are ordered such that the first element of each sublist occur in increasing numeric order.
+Note that for a method with no working bells (which will then have a one lead plain
+course) this function also returns <code class="code">nil</code>. Signals a <code class="code">type-error</code> if <var class="var">method</var>
+is not a <code class="code">method</code>. Signals a <code class="code">parse-error</code> if the place notation string cannot
+be properly parsed as place notation at <var class="var">method</var>&rsquo;s stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-working-bells (method :stage 7
+                               :place-notation &quot;7.1.7.47,27&quot;))
+     &rArr; ((1 4 5) (2 6 3))
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="method_002dlead_002dhead_002dcode"></a><a class="index-entry-id" id="index-method_002dlead_002dhead_002dcode"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dlead_002dhead_002dcode-1"><span class="category-def">Function: </span><span><strong class="def-name">method-lead-head-code</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dlead_002dhead_002dcode-1"> &para;</a></span></dt>
+<dd><p>Returns the lead head code for <var class="var">method</var>, as a keyword, if its stage and place
+notation are set and it has Plain Bob or Grandsire lead ends, and otherwise returns
+<code class="code">nil</code>. No methods below minimus are considered to have such lead ends, nor is rounds
+considered such a lead end. When not <code class="code">nil</code> the result is a keyword whose name
+consists of a single letter, possibly followed by a digit.
+</p>
+<p>The CCCBR&rsquo;s various collections of methods have, for several decades, used succinct codes,
+typically single letters or, more recently, single letters followed by digits, to denote
+various lead ends for the methods they contain. While the choices made have in the past
+varied by collection, in recent decades a consistent set of codes has been used, which is
+now codified in the Central Council of Church Bell Ringers
+<a class="url" href="https://framework.cccbr.org.uk">Framework for Method Ringing</a> (FMR), appendix C.
+While these codes actually describe both a row and a change
+adjacent to that row, and thus two different rows, the FMR calls them &quot;lead head codes&quot;,
+so that phrasing is also used here.
+</p>
+<p>There is currently (as of May 2026) an issue with the definitions of these codes in the
+FMR, where those for Grandsire-like methods do not correctly correspond to common
+practice. For example, most ringers would consider Itchingfield Slow Bob Doubles and
+Longford Bob Doubles to have the same lead ends. However, the current FMR definition says
+that the former has Grandsire lead ends, and the latter does not. This has been a subject
+for discussion for possibleamendment in a future revision of the FMR. The
+<code class="code">method-lead-head-code</code> function is implemented assuming that this will be amended
+in a future revision of the FMR to match common practice. For example, it considers
+neither Itchingfield Slow Bob nor Longford Bob as having Grandsire lead ends.
+</p>
+<p>It is also worth noting that, for some of the less common cases, the lead end codes
+defined in the FMR differ from those used in earlier CCCBR collections.
+</p>
+<p>Signals a <code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>, and a
+<code class="code">parse-error</code> if <var class="var">method</var>&rsquo;s place notation cannot be interpreted at its stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-lead-head-code
+   (lookup-method-by-title &quot;Advent Surprise Major&quot;))
+     &rArr; :h
+ (method-lead-head-code
+   (lookup-method-by-title &quot;Zanussi Surprise Maximus&quot;))
+     &rArr; :j2
+ (method-lead-head-code
+   (lookup-method-by-title &quot;Sgurr Surprise Royal&quot;))
+     &rArr; :d
+ (method-lead-head-code
+   (lookup-method-by-title &quot;Twerton Little Bob Caters&quot;))
+     &rArr; :q2
+ (method-lead-head-code
+   (lookup-method-by-title &quot;Grandsire Royal&quot;))
+     &rArr; :p
+ (method-lead-head-code
+   (lookup-method-by-title &quot;Double Glasgow Surprise Major&quot;))
+     &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="index-entry-id" id="index-symmetry"></a>
+<a class="index-entry-id" id="index-palindromes-1"></a>
+<a class="anchor" id="method_002dconventionally_002dsymmetric_002dp"></a><a class="index-entry-id" id="index-method_002dconventionally_002dsymmetric_002dp"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dconventionally_002dsymmetric_002dp-1"><span class="category-def">Function: </span><span><strong class="def-name">method-conventionally-symmetric-p</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dconventionally_002dsymmetric_002dp-1"> &para;</a></span></dt>
+<dd><p>Returns true if and only if the method has an even lead length and conventional
+palindromic symmetry with apices at its half-lead and lead-end. Note that this means
+it is false for methods such as Grandsire. Signals a <code class="code">type-error</code> if <var class="var">method</var> is
+not a <code class="code">method</code>. Signals a <code class="code">no-place-notation-error</code> if <var class="var">method</var>&rsquo;s stage or
+place notation are not set. Signals a <code class="code">parse-error</code> if <var class="var">method</var>&rsquo;s place notation
+cannot be interpreted at its stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-conventionally-symmetric-p
+   (lookup-method-by-title &quot;Advent Surprise Major&quot;))
+     &rArr; t
+ (method-conventionally-symmetric-p
+   (lookup-method-by-title &quot;Grandsire Caters&quot;))
+     &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="index-entry-id" id="index-rotations"></a>
+<a class="anchor" id="method_002drotations_002dp"></a><a class="index-entry-id" id="index-method_002drotations_002dp"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002drotations_002dp-1"><span class="category-def">Function: </span><span><strong class="def-name">method-rotations-p</strong> <var class="def-var-arguments">method-1 method-2</var><a class="copiable-link" href="#index-method_002drotations_002dp-1"> &para;</a></span></dt>
+<dd><p>Returns true if and only if the changes constituting a lead of <var class="var">method-1</var> are the
+same as those constituting a lead of <var class="var">method-2</var>, possibly rotated. If the changes are
+the same even without rotation that is considered a trivial rotation, and also returns
+true. Note that if <var class="var">method-1</var> and <var class="var">method-2</var> are of different stages the result
+will always be false.
+</p>
+<p>Signals a <code class="code">no-place-notation-error</code> if either argument does not have its stage or
+place notation set. Signals a <code class="code">type-error</code> if either argument is not a <code class="code">method</code>.
+Signals a <code class="code">parse-error</code> if the place notation of either argument cannot be parsed as
+place notation at its stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-rotations-p
+   (method :stage 5 :place-notation &quot;3,1.5.1.5.1&quot;)
+   (method :stage 5 :place-notation &quot;5.1.5.1,1.3&quot;))
+     &rArr; t
+ (method-rotations-p
+   (method :stage 5 :place-notation &quot;3,1.5.1.5.1&quot;)
+   (method :stage 5 :place-notation &quot;3,1.5.1.5.1&quot;))
+     &rArr; t
+ (method-rotations-p
+   (method :stage 5 :place-notation &quot;3,1.5.1.5.1&quot;)
+   (method :stage 5 :place-notation &quot;3,1.3.1.5.1&quot;)
+     &rArr; nil
+ (method-rotations-p
+   (method :stage 5 :place-notation &quot;3,1.5.1.5.1&quot;)
+   (method :stage 7 :place-notation &quot;5.1.5.1,1.3&quot;))
+     &rArr; nil)
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="method_002dcanonical_002drotation_002dkey"></a><a class="index-entry-id" id="index-method_002dcanonical_002drotation_002dkey"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-method_002dcanonical_002drotation_002dkey-1"><span class="category-def">Function: </span><span><strong class="def-name">method-canonical-rotation-key</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-method_002dcanonical_002drotation_002dkey-1"> &para;</a></span></dt>
+<dd><p>If <var class="var">method</var> has its stage and place notation set returns a string uniquely
+identifying, using <code class="code">equal</code>, the changes of a lead of this method, invariant under
+rotation. That is, if, and only if, two methods are rotations, possibly trivially so, of
+one another their <code class="code">method-canonical-rotation-key</code>s will always be <code class="code">equal</code>. While
+a string, the value is essentially an opaque type and should generally not be displayed to
+an end user or otherwise have its structure depended upon, though it can be printed and
+read back in again. While, within one version of Roan, this key can be counted on to be
+the same in different sessions and on different machines, it may change between versions
+of Roan. If <var class="var">method</var> does not have both its stage and place notation set
+<code class="code">method-canonical-rotation-key</code> returns <code class="code">nil</code>.
+</p>
+<p>Signals a <code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>. Signals a
+<code class="code">parse-error</code> if <var class="var">method</var>&rsquo;s place notation cannot be properly parsed at its
+stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-canonical-rotation-key
+   (lookup-method &quot;Cambridge Surprise&quot; 8))
+     &rArr; &quot;bAvzluTjWO5P&quot;
+ (method-canonical-rotation-key
+   (method :stage 8 :place-notation &quot;5x6x7,x4x36x25x4x3x2&quot;))
+     &rArr; &quot;bAvzluTjWO5P&quot;
+ (method-canonical-rotation-key
+   (method :stage 8 :place-notation &quot;x1x4,2&quot;))
+     &rArr; &quot;bEvy3Zo&quot;
+ (method-canonical-rotation-key
+   (method :stage 10 :place-notation &quot;x1x4,2&quot;))
+     &rArr; &quot;Oi3Jd2sC&quot;
+
+ (method-canonical-rotation-key (method) &rArr; nil
+</pre></div></div>
+</dd></dl>
+
+<a class="index-entry-id" id="index-classification-1"></a>
+<a class="index-entry-id" id="index-Central-Council-2"></a>
+<a class="index-entry-id" id="index-CCCBR-2"></a>
+<a class="index-entry-id" id="index-FMR-1"></a>
+<a class="index-entry-id" id="index-Framework-1"></a>
+<a class="anchor" id="classify_002dmethod"></a><a class="index-entry-id" id="index-classify_002dmethod"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-classify_002dmethod-1"><span class="category-def">Function: </span><span><strong class="def-name">classify-method</strong> <var class="def-var-arguments">method</var><a class="copiable-link" href="#index-classify_002dmethod-1"> &para;</a></span></dt>
+<dd><p>Assigns the classification fields of <var class="var">method</var> to match the classification assigned
+by the Central Council of Church Bell Ringers
+<a class="url" href="https://framework.cccbr.org.uk">Framework for Method
+Ringing</a> (FMR) for the place notation contained in that <code class="code">method</code>, and returns the
+method. Signals a <code class="code">type-error</code> if <var class="var">method</var> is not a <code class="code">method</code>. Signals a
+<code class="code">no-place-notation-error</code> if either the stage or place notation of <var class="var">method</var> are
+not set. Signals a <code class="code">parse-error</code> if the value of the place notation field cannot be
+interpreted as place notation at the stage of <var class="var">method</var>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (method-title (classify-method
+                 (method :stage 8 :place-notation &quot;x3x6x5x45,2&quot;))
+               t)
+     &rArr; &quot;Unnamed Differential Little Surprise Major&quot;
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="no_002dplace_002dnotation_002derror_002dtype"></a><a class="index-entry-id" id="index-no_002dplace_002dnotation_002derror"></a>
+<dl class="first-deftp def-block">
+<dt class="deftp def-line" id="index-no_002dplace_002dnotation_002derror-1"><span class="category-def">Type: </span><span><strong class="def-name">no-place-notation-error</strong><a class="copiable-link" href="#index-no_002dplace_002dnotation_002derror-1"> &para;</a></span></dt>
+<dd><p>Signaled in circumstances when the changes constituting a method are
+needed but are not available because the method&rsquo;s place notation or stage is empty.
+Contains one potentially useful slot accessbile with
+<code class="code">no-place-notation-error-method</code>. Note, however, that many functions that make use
+of a method&rsquo;s place notation and stage will return <code class="code">nil</code> rather than signaling this
+error if either is not present.
+</p></dd></dl>
+
+<a class="index-entry-id" id="index-blueline"></a>
+<a class="index-entry-id" id="index-blue-line"></a>
+<a class="index-entry-id" id="index-line"></a>
+<a class="index-entry-id" id="index-SVG"></a>
+<a class="index-entry-id" id="index-graphic"></a>
+</div>
+<div class="section-level-extent" id="Drawing-blue-lines">
+<h3 class="section"><span>5.3 Drawing blue lines<a class="copiable-link" href="#Drawing-blue-lines"> &para;</a></span></h3>
+<a class="anchor" id="blueline"></a><a class="index-entry-id" id="index-blueline-1"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-blueline-2"><span class="category-def">Function: </span><span><strong class="def-name">blueline</strong> <var class="def-var-arguments">destination method &amp;rest keys &amp;key layout hunt-bell working-bell figures place-notation place-bells</var><a class="copiable-link" href="#index-blueline-2"> &para;</a></span></dt>
+<dd><p>Draws the blue line of <var class="var">method</var> as a Scalable Vector Graphics (SVG) image. The
+<var class="var">method</var> should have its stage and place notation set. While Roan only writes SVG
+format images, many other pieces of software, such as
+<a class="url" href="https://imagemagick.org/">ImageMagick</a>, are able to convert SVG images to other
+formats.
+</p>
+<p>The <var class="var">destination</var> can be
+</p><ul class="itemize mark-bullet">
+<li>A text stream, open for writing:
+the SVG will be written to this stream, and the stream is returned as the value of the
+call to <code class="code">blueline</code>.
+
+</li><li>The symbol <code class="code">t</code>:
+the SVG will be written to <code class="code">*standard-output*</code>, and the value of
+<code class="code">*standard-output*</code> is returned as the value of the
+call to <code class="code">blueline</code>.
+
+</li><li>A pathname:
+an SVG file will be written to this pathname, which will be opened with
+<code class="code">if-exists :supersede</code>, and the truename of the resulting file is returned.
+
+</li><li>A string with a fill pointer:
+the SVG will be appended to this string, as by <code class="code">vector-push-extend</code>, which is
+returned.
+
+</li><li>The symbol <code class="code">nil</code>:
+the SVG will be written to a new string, which is returned.
+</li></ul>
+
+<p>Several keyword parameters can be used to control details of the image produced
+</p><dl class="table">
+<dt><var class="var">layout</var></dt>
+<dd><p>Controls the distribution of leads into columns. For differentials, or methods with
+multiple, equal length cycles of working bells, each cycle always starts a new column.
+Within a cycle the value of <var class="var">layout</var> controls the number of leads in a column. If it
+is a non-negative integer, this is the maximum number of rows in a column; though if the
+lead length exceeds this value each column will contain one lead. If <code class="code">nil</code> there is
+no limit to the number of leads in a column, each cycle of working bells then filling a
+column.The special value <code class="code">:grid</code> may also be supplied, in which case only a single
+column is used for a single lead, with all the bells blue lines combined into it as a grid.
+The default value for <var class="var">layout</var> is <code class="code">100</code>.
+</p>
+</dd>
+<dt><var class="var">hunt-bell</var></dt>
+<dd><p>Controls which hunt bells are displayed specially. Those not displayed specially are
+treated as working bells. If a <code class="code">bell</code>, that is, a small, non-negative integer less
+than the stage of <var class="var">method</var>, this is the hunt bell displayed specially; a list of
+<code class="code">bell</code>s may also be supplied, for multiple hunt bells. If a supplied <code class="code">bell</code> is
+not actually a hunt bell of <var class="var">method</var> it is ignored. The keyword <code class="code">first</code> is
+equivalent to supplying whatever the smallest hunt bell of <var class="var">method</var> is. The keyword
+<code class="code">:all</code> is equivalent to supplying a list of all the hunt bells of <var class="var">method</var>. The
+keyword <code class="code">:working</code> treats all of the hunt bells as working bells. If <var class="var">hunt-bell</var>
+is <code class="code">nil</code> no hunt bells are displayed. The default value for <var class="var">hunt-bell</var> is
+<code class="code">:first</code>.
+</p>
+</dd>
+<dt><var class="var">working-bell</var></dt>
+<dd><p>Controls which working bell of each cycle is drawn first, the others following on in the
+order in which they are rung. This can be a <code class="code">bell</code>, or a list thereof, or one of the
+keywords <code class="code">:natural</code>, <code class="code">:largest</code> or <code class="code">:smallest</code>. If <code class="code">:natural</code> for
+each cycle the largest bell that makes a place across the lead end is chosen; if there
+is no such bell in a cycle the largest bell in that cycle is used. For methods with
+Grandsire-like palindromic symmetry the first row of the lead is used instead of the
+lead end. The default value for <var class="var">working-bell</var> is <code class="code">:natural</code>.
+</p>
+</dd>
+<dt><var class="var">figures</var></dt>
+<dd><p>If non-null figures (bell names) will also be drawn, in addition to the blue line.
+If <code class="code">t</code> they will be drawn for all leads.
+If <code class="code">:lead</code> only for the first lead of each cycle. If
+<code class="code">:half</code> and the <var class="var">method</var> has the usual palindromic symmetry around the half lead,
+with one additional change at the lead end, they will only be drawn for the first
+half-lead; otherwise <code class="code">:half</code> is equivalent to <code class="code">:lead</code>. If <code class="code">:head</code> the
+figures will only be drawn for the first lead head in each column. The default value for
+<var class="var">figures</var> is <code class="code">nil</code>.
+</p>
+</dd>
+<dt><var class="var">place-notation</var></dt>
+<dd><p>if non-null the place notation will be drawn to the left of the blue lines. If <code class="code">t</code> it
+will be drawn for the first lead in each column. If <code class="code">:lead</code> it will only be drawn for
+the first columnn. If <code class="code">:half</code> and the <var class="var">method</var> has the usual palindromic symmetry
+around the half lead, with one additional change at the lead end, it will only be drawn
+for the first half lead, plus at the lead end; otherwise <code class="code">:half</code> is equivalent to
+<code class="code">:lead</code>. The default value for <code class="code">place-notation</code> is <code class="code">nil</code>.
+</p>
+</dd>
+<dt><var class="var">place-bells</var></dt>
+<dd><p>May have a value of <code class="code">nil</code>, <code class="code">:dot</code> or <code class="code">:label</code>. If non-null dots are drawn
+where each place bell starts, and if <code class="code">:label</code> a label is drawn to the right of the
+blue line at each place bell&rsquo;s start. The default value for <var class="var">place-bells</var> is
+<code class="code">:label</code>.
+</p></dd>
+</dl>
+
+<p>For an example, execute something like the following, and open the resulting file in a
+browser:
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (blueline #P&quot;/tmp/bastow.svg&quot;
+           (lookup-method-by-title &quot;Bastow Little Bob Minor&quot;)
+           :layout 12
+           :figures :lead
+           :place-notation :half)
+</pre></div></div>
+
+<p>Default values for the keyword arguments to this function can be set by assigning a
+property list of keywords and values to the variable <code class="code">*blueline-default-parameters*</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (equal
+   (blueline nil
+             (lookup-method-by-title &quot;Advent Surprise Major&quot;)
+             :layout nil
+             :figures t
+             :place-notation :lead)
+   (let ((*blueline-default-parameters*
+            '(:layout nil :figures t :place-notation :lead)))
+     (blueline nil (lookup-method-by-title &quot;Advent Surprise Major&quot;))))
+   &rArr; t
+</pre></div></div>
+
+
+<p>Signals a <code class="code">type-error</code> if <var class="var">destination</var> is not a stream, pathname, string with a
+fill pointer or one of the symbols <code class="code">t</code> or <code class="code">nil</code>; if <var class="var">method</var> is not a
+<code class="code">method</code>; if <var class="var">layout</var> is not non-negative integer, <code class="code">nil</code> or the keyword
+<code class="code">:grid</code>; if <var class="var">hunt-bell</var> is not a <code class="code">bell</code>, list of bells, <code class="code">nil</code> or one
+one of the keywords <code class="code">:first</code>, <code class="code">:all</code> or <code class="code">:working</code>. if <var class="var">working-bell</var>
+is not a <code class="code">bell</code>, list of bells, or one of the symbols <code class="code">:natural</code>,
+<code class="code">:largest</code> or <code class="code">smallest</code>; if <var class="var">figures</var> is not one of the keywords
+<code class="code">:none</code>, <code class="code">:head</code>, <code class="code">:half</code>, <code class="code">:lead</code> or <code class="code">:always</code>; if
+<var class="var">place-notation</var> is not one of the keywords <code class="code">:none</code>, <code class="code">:half</code>, <code class="code">:lead</code>
+or <code class="code">:always</code>; or if <var class="var">place-bells</var> is not <code class="code">nil</code> or one of the keywords
+<code class="code">:dot</code> or<code class="code">:label</code>. Signals a <code class="code">no-place-notation-error</code> if <var class="var">method</var>
+doesn&rsquo;t have both its stage and place notation set. Can signal various errors if an I/O
+error occurs trying to write to a stream or create a file.
+</p></dd></dl>
+
+<a class="index-entry-id" id="index-falseness"></a>
+<a class="index-entry-id" id="index-false-course-head-groups"></a>
+<a class="index-entry-id" id="index-summary-falseness"></a>
+<a class="index-entry-id" id="index-incidence-of-falseness"></a>
+<a class="index-entry-id" id="index-Hodgson_002c-Maurice"></a>
+<a class="index-entry-id" id="index-Baldwin_002c-Roger"></a>
+<a class="index-entry-id" id="index-Shuttleworth_002c-Edmund"></a>
+<a class="index-entry-id" id="index-Leary_002c-John"></a>
+</div>
+</div>
+<hr>
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="Falseness.html" rel="next">Internal Falseness</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="Patterns.html#Patterns" rel="prev">Patterns</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+
+
+
+</body>
+</html>

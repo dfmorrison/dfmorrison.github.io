@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.3, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is documentation of Roan, version 9.0.29.
+
+This documentation is copyright © 2015-2026 Donald F Morrison.
+
+Copying and distribution of this documentation, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved. -->
+<title>Introduction (Roan 9.0.29)</title>
+
+<meta name="description" content="Introduction (Roan 9.0.29)">
+<meta name="keywords" content="Introduction (Roan 9.0.29)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Documentation-Index.html" rel="index" title="Documentation Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html" rel="up" title="Top">
+<link href="Fundamental-Types.html#Fundamental-Types" rel="next" title="Fundamental Types">
+<link href="index.html" rel="prev" title="Top">
+<style type="text/css">
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+dt.def-line {font-size: 1rem}
+span:hover a.copiable-link {visibility: visible}
+strong.def-name {font-family: monospace; font-weight: bold}
+ul.mark-bullet {list-style-type: disc}
+body {
+    max-width: 44em;
+    margin-left: 2em;
+    background-color: white;
+}
+
+</style>
+
+
+</head>
+
+<body>
+<div class="chapter-level-extent" id="Introduction">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="Fundamental-Types.html#Fundamental-Types" rel="next">Fundamental Types</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h2 class="chapter" id="Introduction-1"><span>1 Introduction<a class="copiable-link" href="#Introduction-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-change-ringing"></a>
+<a class="index-entry-id" id="index-Common-Lisp"></a>
+<a class="index-entry-id" id="index-introduction"></a>
+<a class="index-entry-id" id="index-Ringing-Class-Library"></a>
+<a class="index-entry-id" id="index-features"></a>
+<p>Roan is a library of
+<a class="url" href="http://en.wikipedia.org/wiki/Common_Lisp">Common Lisp</a>
+code for writing applications related to
+<a class="url" href="http://www.ringing.org/change-ringing">change ringing</a>.
+It is roughly comparable to the
+<a class="url" href="http://ringing-lib.sourceforge.net/">Ringing Class Library</a>,
+although that is for the C++ programming language, and the two libraries differ in many
+other ways.
+</p>
+<a class="index-entry-id" id="index-features-1"></a>
+<p>Roan provides
+</p><ul class="itemize mark-bullet">
+<li>facilities for representing rows and changes as Lisp objects, and permuting them, etc.
+
+</li><li>functions for reading and writing place notation, extended to support jump changes as well
+as conveniently representing palindromic sequences of changes
+
+</li><li>a set data structure suitable for collecting and proving sets of rows, or sets of sets of rows
+
+</li><li>a pattern language for matching rows, for example, for identifying ones with properties
+considered musically desirable; and that includes the ability to match pairs of rows,
+which enables identifying wraps
+
+</li><li>a data structure for describing methods, which can include jump changes,
+
+</li><li>a searchable library of method definitions, together with a mechanism for
+updating that library from the <a class="url" href="https://cccbr.github.io/methods-library/">CCCBR Methods Library</a>
+
+</li><li>a function for drawing blue lines of methods as Scalable Vector Graphics (SVG) images
+
+</li><li>a function for extracting false course heads from common kinds of methods
+
+</li><li>a representation of calls, allowing replacing, deleting or adding one or more changes to a
+plain lead of a method, at any point within that lead, and possibly spanning two leads as
+is done in doubles variations.
+</li></ul>
+
+<p>While this manual describes Roan, it is neither a tutorial on Lisp nor one on change
+ringing. If you don&rsquo;t know Common Lisp or don&rsquo;t know about change ringing, much of this
+manual is likely to be confusing.
+</p>
+<a class="index-entry-id" id="index-license"></a>
+<p>Roan is distributed under an MIT open source license. While you should read it for
+complete details, it largely means that you can just use Roan for nearly anything you like.
+See <a class="xref" href="License.html">License</a>.
+Roan also loads and uses a variety of other libraries. See <a class="xref" href="Libraries-Used-by-Roan.html#dependencies">dependencies</a>.
+</p>
+
+<ul class="mini-toc">
+<li><a href="#Obtaining-and-installing-Roan">Obtaining and installing Roan</a></li>
+<li><a href="#Reporting-bugs">Reporting bugs</a></li>
+<li><a href="#A-note-on-examples">A note on examples</a></li>
+<li><a href="#The-roan-package">The roan package</a></li>
+</ul>
+<hr>
+<div class="section-level-extent" id="Obtaining-and-installing-Roan">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Reporting-bugs" rel="next">Reporting bugs</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Introduction" rel="up">Introduction</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="Obtaining-and-installing-Roan-1"><span>1.1 Obtaining and installing Roan<a class="copiable-link" href="#Obtaining-and-installing-Roan-1"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-Quicklisp"></a>
+<a class="index-entry-id" id="index-installation"></a>
+<a class="index-entry-id" id="index-downloading"></a>
+<a class="index-entry-id" id="index-ASDF"></a>
+<a class="index-entry-id" id="index-library"></a>
+<a class="index-entry-id" id="index-Bitbucket"></a>
+<p>While <a class="url" href="http://quicklisp.org">Quicklisp</a> is not required to run Roan, it is recommended.
+With Quicklisp installed and configured, you can download and install Roan by simply
+evaluating <code class="code">(ql:quickload :roan)</code>.
+</p>
+<p>Quicklisp&rsquo;s <code class="code">quickload</code> function, above, will also pull in all the other libraries
+upon which Roan depends; if you don&rsquo;t use Quicklisp you will have to ensure that those
+libraries are available and loaded. If you don&rsquo;t want to use Quicklisp, and prefer to load
+Roan by hand, the repository for Roan itself is at
+<a class="url" href="https://github.com/dfmorrison/roan">https://github.com/dfmorrison/roan</a>.
+</p>
+<p>Note that Quicklisp creates a new distribution irregularly, these days it appears perhaps
+once every six months or more, so there may be a lag
+of that duration between when a new version is available in the GitHub repository and
+when that version is available in Quicklisp. If you need it sooner, you may need to
+download it yourself from GitHub.
+</p>
+<a class="index-entry-id" id="index-Lisp-implementations"></a>
+<p>Roan has been tested with at least
+</p><ul class="itemize mark-bullet">
+<li><a class="url" href="http://sbcl.org"><abbr class="acronym" title="Steel Bank Common Lisp">SBCL</abbr> (Steel Bank Common Lisp)</a> version 2.4.0 (ARM64) on
+macOS 26.5
+</li><li>SBCL version 1.5.5 (x86-64) on Ubuntu Linux 18.04.3.
+</li><li>and <a class="url" href="http:ccl.clozure.com"><abbr class="acronym" title="Clozure CL">CCL</abbr> (Clozure CL)</a> version 1.11.5 (x86-64),
+on Ubuntu Linux 18.04.3,
+</li></ul>
+<p>but should also work in other, modern Common Lisp implementations that
+support the libraries on which Roan depends. See <a class="xref" href="Libraries-Used-by-Roan.html#dependencies">dependencies</a>.
+</p>
+
+<hr>
+</div>
+<div class="section-level-extent" id="Reporting-bugs">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#A-note-on-examples" rel="next">A note on examples</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Obtaining-and-installing-Roan" rel="prev">Obtaining and installing Roan</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Introduction" rel="up">Introduction</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="Reporting-bugs-1"><span>1.2 Reporting bugs<a class="copiable-link" href="#Reporting-bugs-1"> &para;</a></span></h3>
+
+<p>The best way to report bugs is to submit them with
+<a class="url" href="https://github.com/dfmorrison/roan/issues">Roan&rsquo;s GitHub issue tracker</a>.
+If that doesn&rsquo;t work for you you can also send mail
+to Don Morrison &lt;<a class="email" href="mailto:dfmorrison@gmail.com">dfmorrison@gmail.com</a>&gt;.
+</p>
+<p>It would be helpful, and will be more likely to lead to successful resolution of the bug,
+if a bug report includes
+</p><ul class="itemize mark-bullet">
+<li>a detailed prescription of how to generate the bug, preferably from as simple a starting
+place as you can use to reproduce it; that is, send code, that when evaluated,
+demonstrates the bug
+
+</li><li>the version of Roan you are using; this can be found by evaluating
+<code class="code">(asdf:component-version (asdf:find-system :roan))</code>
+
+</li><li>if the problem might involve the lookup of methods, then also the output from
+<code class="code">(roan:method-library-details)</code>
+
+</li><li>the name and version number of the Lisp implementation you are using, as well as whether
+it is 32-bit or 64-bit if both are available
+
+</li><li>the name and version number of the operating system on which it is running
+
+</li><li>the kind of processor on which it is running, especially if it&rsquo;s something unusual
+</li></ul>
+
+
+<hr>
+</div>
+<div class="section-level-extent" id="A-note-on-examples">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#The-roan-package" rel="next">The roan package</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Reporting-bugs" rel="prev">Reporting bugs</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Introduction" rel="up">Introduction</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="A-note-on-examples-1"><span>1.3 A note on examples<a class="copiable-link" href="#A-note-on-examples-1"> &para;</a></span></h3>
+
+<p>Examples in this manual are typically of the form
+</p><div class="example">
+<pre class="example-preformatted">(caddr '(1 2 3 4)) &rArr;  3
+</pre></div>
+<p>That is, an expression, followed by &lsquo;<samp class="samp">&rArr;</samp>&rsquo; and a printed
+representation of the result of evaluating that expression. That right hand side is
+typically not exactly as the <abbr class="acronym" title="Read Eval Print Loop">REPL</abbr> (Read Eval Print Loop) might print it:
+for example, symbols will usually be shown in lower case while most
+Lisp implementation&rsquo;s <abbr class="acronym" title="Read Eval Print Loop">REPL</abbr>s will use upper case; and things like
+hash-sets that have indeterminate order may result in different orders
+of elements of lists.
+</p>
+<p>Occasionally, though, examples will look like
+</p><div class="example">
+<div class="group"><pre class="example-preformatted">CL-USER&gt; (+ 1 2 3)
+6
+CL-USER&gt; (values (+ 1 2 3) (cons 'a 'b))
+6
+(A . B)
+CL-USER&gt;
+</pre></div></div>
+<p>In this case the example is a transcript of an interaction with a <abbr class="acronym" title="Read Eval Print Loop">REPL</abbr>.
+None of the examples makes explicit note of which of these two styles is being used,
+it being assumed the reader can easily deduce this from their appearances.
+</p>
+
+<hr>
+</div>
+<div class="section-level-extent" id="The-roan-package">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#A-note-on-examples" rel="prev">A note on examples</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Introduction" rel="up">Introduction</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="The-roan-package-1"><span>1.4 The roan package<a class="copiable-link" href="#The-roan-package-1"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-roan-package"></a>
+<a class="index-entry-id" id="index-packages"></a>
+<p>All the symbols used by Roan to name functions, variables and so on are in the <code class="code">roan</code>
+package. When using them from another package, such as <code class="code">cl-user</code>, they should be
+prefixed with an explicit <code class="code">roan:</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> CL-USER&gt; *package*
+ #&lt;Package &quot;COMMON-LISP-USER&quot;&gt;
+ CL-USER&gt; roan:+maximum-stage+
+ 24
+</pre></div></div>
+
+<p>Alternatively all the external symbols of the <code class="code">roan</code> package can be imported into a
+package with <code class="code">use-package</code>, or the <code class="code">:use</code> option to <code class="code">defpackage</code>. There is
+the slight complication, however, that the <code class="code">roan</code> package shadows the symbols
+<code class="code">method</code>, <code class="code">method-name</code> and <code class="code">class-name</code> from the
+<code class="code">common-lisp</code> package. This is done because methods and their classes are important
+concepts in change ringing, albeit ones unrelated to CLOS methods and classes. Typically
+<code class="code">method</code>, <code class="code">method-name</code> and <code class="code">class-name</code> should be shadowed
+in other packages that use the <code class="code">roan</code> package. This can be done with
+<code class="code">shadowing-import-from</code>, or the <code class="code">:shadowing-import</code> option to <code class="code">defpackage</code>.
+Note that the original Common Lisp symbols will still be available as <code class="code">cl:method</code>,
+<code class="code">cl:method-name</code> and <code class="code">cl:class-name</code>. See <a class="xref" href="#use_002droan">use-roan</a>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted">MY-PACKAGE&gt; *package* #&lt;Package &quot;MY-PACKAGE&quot;&gt; MY-PACKAGE&gt; (package-use-list *)
+ (#&lt;Package &quot;COMMON-LISP&quot;&gt;)
+ MY-PACKAGE&gt; (shadowing-import '(roan:method roan:method-name))
+ T
+ MY-PACKAGE&gt; (use-package :roan)
+ T
+ MY-PACKAGE&gt; +maximum-stage+
+ 24
+</pre></div></div>
+<a class="anchor" id="roan"></a><dl class="first-deftp def-block">
+<dt class="deftp def-line" id="index-roan"><span class="category-def">Package: </span><span><strong class="def-name">roan</strong><a class="copiable-link" href="#index-roan"> &para;</a></span></dt>
+<dd><p>Contains the symbols used by Roan. The <code class="code">roan</code> package shadows three symbols from the
+<code class="code">common-lisp</code> package: <code class="code">method</code>, <code class="code">method-name</code> and
+<code class="code">class-name</code>. The functions and so on attached to these symbols in the
+<code class="code">common-lisp</code> package are usually only needed when doing introspection, and the
+shadowing should rarely cause difficulties.
+</p></dd></dl>
+<a class="anchor" id="use_002droan"></a><a class="index-entry-id" id="index-use_002droan"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-use_002droan-1"><span class="category-def">Function: </span><span><strong class="def-name">use-roan</strong> <var class="def-var-arguments">&amp;key package syntax modify</var><a class="copiable-link" href="#index-use_002droan-1"> &para;</a></span></dt>
+<dd><p>A convenience function for using the <code class="code">roan</code> package. Causes <var class="var">package</var>,
+which defaults to the current value of <code class="code">*package*</code>, to inherit all the external
+symbols of the <code class="code">roan</code> package, shadowing <code class="code">method</code>, <code class="code">method-name</code> and
+<code class="code">class-name</code>.
+</p>
+<p>If the generalized boolean <var class="var">syntax</var> is true, the default, it also enables use of
+Roan&rsquo;s &lsquo;<samp class="samp">!</samp>&rsquo; and &lsquo;<samp class="samp">#!</samp>&rsquo; read macros, by calling <a class="ref" href="Fundamental-Types.html#roan_002dsyntax">roan-syntax</a> with a true first
+argument; the value of <var class="var">modify</var> is passed as a second argument to <a class="ref" href="Fundamental-Types.html#roan_002dsyntax">roan-syntax</a>.
+</p>
+<p>Signals a <code class="code">type-error</code> if <var class="var">package</var> is not a package designator. Signals a
+<code class="code">package-error</code> if <var class="var">package</var> is the <code class="code">keyword</code> package.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> MY-PACKAGE&gt; *package*
+ #&lt;Package &quot;MY-PACKAGE&quot;&gt;
+ MY-PACKAGE&gt; (package-use-list *)
+ (#&lt;Package &quot;COMMON-LISP&quot;&gt;)
+ MY-PACKAGE&gt; (rowp '!13276548)
+ NIL
+ MY-PACKAGE&gt; (roan:use-roan)
+ T
+ MY-PACKAGE&gt; +maximum-stage+
+ 24
+ MY-PACKAGE&gt; (rowp '!13276548)
+ T
+ </pre></div><pre class="example-preformatted"> </pre></div>
+</dd></dl>
+
+</div>
+</div>
+<hr>
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="Fundamental-Types.html#Fundamental-Types" rel="next">Fundamental Types</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+
+
+
+</body>
+</html>

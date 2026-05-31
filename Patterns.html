@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.3, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is documentation of Roan, version 9.0.29.
+
+This documentation is copyright © 2015-2026 Donald F Morrison.
+
+Copying and distribution of this documentation, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved. -->
+<title>Patterns (Roan 9.0.29)</title>
+
+<meta name="description" content="Patterns (Roan 9.0.29)">
+<meta name="keywords" content="Patterns (Roan 9.0.29)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Documentation-Index.html" rel="index" title="Documentation Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html" rel="up" title="Top">
+<link href="Methods.html#Methods" rel="next" title="Methods">
+<link href="Hash_002dsets.html#Hash_002dsets" rel="prev" title="Hash-sets">
+<style type="text/css">
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+dt.def-line {font-size: 1rem}
+span:hover a.copiable-link {visibility: visible}
+strong.def-name {font-family: monospace; font-weight: bold}
+body {
+    max-width: 44em;
+    margin-left: 2em;
+    background-color: white;
+}
+
+</style>
+
+
+</head>
+
+<body>
+<div class="chapter-level-extent" id="Patterns">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="Methods.html#Methods" rel="next">Methods</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="Hash_002dsets.html#Hash_002dsets" rel="prev">Hash-sets</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h2 class="chapter" id="Patterns-1"><span>4 Patterns<a class="copiable-link" href="#Patterns-1"> &para;</a></span></h2>
+
+<p>Roan provides a simple pattern language for matching rows. This is useful, among other
+things, for counting rows considered particularly musical or unmusical.
+</p>
+<p>A pattern string describes the bells in a row, with several kinds of wildcards and other
+constructs matching multiple bells. Bells&rsquo; names match themselves, so, for example,
+&quot;13572468&quot; matches queens on eight. A question mark matches any bell, and an asterisk
+matches runs of zero or more bells. Thus &quot;*7468&quot;, at major, matches all twenty-four
+7468s, and &quot;?5?6?7?8&quot; matches all twenty-four major rows that have the 5-6-7-8 in the
+positions they are in in tittums. Alternatives can be separated by the pipe character,
+&lsquo;<samp class="samp">|</samp>&rsquo;. Thus &quot;13572468|12753468&quot; matches either queens or Whittingtons. Concatentation
+of characters binds more tightly than alternation, but parentheses can be used to group
+subexpressions. Thus &quot;*(4|5|6)(4|5|6)78&quot; at major matches all 144 combination rollups.
+When matched against two major rows &quot;?*12345678*?&quot; matches wraps of rounds, but not
+either row being rounds.
+</p>
+<p>Two further notations are possible. In each case this further notation does not extend
+what can be expressed, it merely makes more compact something that can be expressed with
+the notations already described. The first is a bell class, which consits of one or more
+bell names within square brackets, and indicates any one of those bells. Thus an
+alternative way to match the 144 combination rollups at major is &quot;*[456][456]78&quot;.
+</p>
+<p>A more compact notation is also available for describing runs of consecutive bells. Two
+bell symbols separated by a hyphen represent the run of bells from one to the other. Thus
+&quot;*5-T&quot; matches all rows ending 567890ET. If such a run description is followed by a
+solidus, &lsquo;<samp class="samp">/</samp>&rsquo;, and a one or two digit integer, it matches all runs of the length of
+that integer that are subsequences of the given run. Thus &quot;*2-8/4&quot; is equivalent to
+&quot;*(2345|3456|4567|5678)&quot;. If instead of a solidus a percent sign, &rsquo;%&rsquo;, is used it
+matches subsequences of both the run and its reverse. Thus &quot;1-6%4*&quot; matches all little
+bell runs off the front of length four selected from the bells 1 through 6, and is
+equivalent to the pattern &quot;(1234|4321|2345|5432|3456|6543)*&quot;. There is some possible
+ambiguity with this notation, in that the second digit of an integer following a solidus
+or percent sign could be interpreted as a digit or a bell symbol. In these cases it is
+always interpreted as a digit, but the other use can be specified by using parentheses or
+a space.
+</p>
+<p>Spaces, but no other whitespace, can be included in patterns. However no spaces may be
+included within bell classes or run descriptions. Thus &quot; 123 [456] 7-T/3 * &quot; is
+equivalent to &quot;123[456]7-T/3*&quot;, but both &quot;123[ 4 5 6 ]7-T/3*&quot; and
+&quot;123[456]7-T / 3*&quot; are illegal, and will cause errors to be signaled.
+</p>
+<p>In addition to strings, patterns may be represented by parse trees, which are simple list
+structures made up of keywords and bells (that is, small, non-negative integers). Strings
+are generally more convenient for reading and writing patterns by humans, but parse trees
+can be more convenient for programmatically generated patterns. The function
+<code class="code">pattern-parse</code> converts the string representation of a pattern to such a tree
+structure. Sequences of elements are represented by lists starting with <code class="code">:sequence</code>;
+alternatives by lists starting with <code class="code">:or</code>; bell classes by lists of the included
+bells preceded by <code class="code">:class</code>; runs by a list of the form <code class="code">(:run <var class="var">start</var>
+<var class="var">end</var> <var class="var">length</var> <var class="var">bi</var>)</code>, where <var class="var">start</var> is the starting <code class="code">bell</code>,
+<var class="var">end</var> the ending <code class="code">bell</code>, <var class="var">length</var> the length of the run, and <var class="var">bi</var> is a
+generalized boolean saying whether or not the runs are bidirectional; <code class="code">bell</code>s are
+represented by themselves; and &lsquo;<samp class="samp">?</samp>&rsquo; and &lsquo;<samp class="samp">*</samp>&rsquo; by <code class="code">:one</code> and <code class="code">:any</code>,
+respectively. The elements of the <code class="code">:sequence</code> and <code class="code">:or</code> lists may also be lists
+themselves, representating subexpressions. For example, the string &quot;(?[234]*|*4-9%4?)*T&quot;
+is equivalent to the tree
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (:sequence (:or (:sequence :one (:class 1 2 3) :any)
+                 (:sequence :any (:run 3 8 4 t) :one))
+            :any
+            11)
+</pre></div></div>
+<a class="anchor" id="row_002dmatch_002dp"></a><a class="index-entry-id" id="index-row_002dmatch_002dp"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-row_002dmatch_002dp-1"><span class="category-def">Function: </span><span><strong class="def-name">row-match-p</strong> <var class="def-var-arguments">pattern row &amp;optional following-row</var><a class="copiable-link" href="#index-row_002dmatch_002dp-1"> &para;</a></span></dt>
+<dd><p>Determines whether <var class="var">row</var>, or a pair of consecutive <code class="code">row</code>s, <var class="var">row</var> and
+<var class="var">following-row</var>, match a pattern. If <var class="var">following-row</var> is supplied it should be of
+the same stage as <var class="var">row</var>. The <var class="var">pattern</var> may be a string or a tree, and should be
+constructed to be appropriate for the stage of <var class="var">row</var>; an error is signaled if it
+contains explicit matches for bells of higher stage than <var class="var">row</var>. Returns a generalized
+boolean indicating whether or not <var class="var">pattern</var> matches.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (row-match-p &quot;*[456][456]78&quot; !32516478) &rArr; t
+ (row-match-p &quot;*[456][456]78&quot; !12453678) &rArr; nil
+ (row-match-p &quot;*[456][456]78&quot; !9012345678) &rArr; t
+ (row-match-p &quot;?*123456*?&quot; !651234 !562143) &rArr; t
+ (row-match-p &quot;?*123456*?&quot; !651234 !652143) &rArr; nil
+ (row-match-p &quot;?*123456*?&quot; !123456) &rArr; nil
+ (row-match-p '(:sequence :any 6 7) !65432178) &rArr; t
+ (row-match-p '(:sequence :any 6 7) !23456781) &rArr; nil
+</pre></div></div>
+
+<p>Signals an error if <var class="var">pattern</var> cannot be parsed as a pattern, if <var class="var">row</var> is not a
+<code class="code">row</code>, if <var class="var">following-row</var> is neither a <code class="code">row</code> nor <code class="code">nil</code>, if
+<var class="var">pattern</var> contains bells above the stage of <var class="var">row</var>, or if <var class="var">following-row</var> is a
+<code class="code">row</code> of a different stage than <var class="var">row</var>.
+</p>
+<p>Care should be used when matching against two rows. In the usual use case where searching
+for things like wraps every row typically will be passed twice to this method, first as
+<var class="var">row</var> and then as <var class="var">following-row</var>. A naive pattern might end up matching twice,
+and thus double counting. For example, if at major &quot;*12345678*&quot; were used to search for
+wraps of rounds it would match whenever <var class="var">row</var> or <var class="var">following-row</var> were themselves
+rounds, possibly leading to double counting. Instead a search for wraps of rounds might be
+better done against something like &quot;?*12345678*?&quot;.
+</p></dd></dl>
+<a class="anchor" id="parse_002dpattern"></a><a class="index-entry-id" id="index-parse_002dpattern"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-parse_002dpattern-1"><span class="category-def">Function: </span><span><strong class="def-name">parse-pattern</strong> <var class="def-var-arguments">pattern &amp;optional stage</var><a class="copiable-link" href="#index-parse_002dpattern-1"> &para;</a></span></dt>
+<dd><p>Converts a string representation of a pattern to its parse tree, and returns it. The
+<var class="var">stage</var> is the stage for which <var class="var">pattern</var> is parsed, and defaults to
+<code class="code">*default-stage*</code>. If <var class="var">pattern</var> is a non-empty list it is presumed to be a
+pattern parse tree and is returned unchanged. Signals a <code class="code">type-error</code> if <var class="var">pattern</var>
+is neither a string nor a non-empty list, or if <var class="var">stage</var> is not a <code class="code">stage</code>. Signals
+a <code class="code">parse-error</code> if <var class="var">pattern</var> is a string but cannot be parsed as a pattern, or
+contains bells above those appropriate for <var class="var">stage</var>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (parse-pattern &quot;(?[234]*|*4-9%4?)*T&quot; 12)
+     &rArr;
+   (:sequence (:or (:sequence :one (:class 1 2 3) :any)
+                   (:sequence :any (:run 3 8 4 t) :one))
+              :any
+              11)
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="format_002dpattern"></a><a class="index-entry-id" id="index-format_002dpattern"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-format_002dpattern-1"><span class="category-def">Function: </span><span><strong class="def-name">format-pattern</strong> <var class="def-var-arguments">tree &amp;optional upper-case</var><a class="copiable-link" href="#index-format_002dpattern-1"> &para;</a></span></dt>
+<dd><p>Returns a string that if parsed with <code class="code">parse-pattern</code>, would return the parse tree
+<var class="var">tree</var>. Note that the generation of a suitable string from <var class="var">tree</var> is not unique,
+and this function simply returns one of potentially many equivalent possibilities. The
+case of any bells represented by letters is controlled by <var class="var">upper-case</var>, which defaults
+to the current value of <code class="code">*print-bells-upper-case*</code>. Signals an error if tree is not
+a parse tree for a pattern.
+</p><div class="example">
+<pre class="example-preformatted"> (format-pattern '(:sequence 0 1 2 :any 7) t) &rArr; &quot;123*8&quot;
+</pre></div>
+</dd></dl>
+<a class="anchor" id="named_002drow_002dpattern"></a><a class="index-entry-id" id="index-named_002drow_002dpattern"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-named_002drow_002dpattern-1"><span class="category-def">Function: </span><span><strong class="def-name">named-row-pattern</strong> <var class="def-var-arguments">name &amp;optional stage covered</var><a class="copiable-link" href="#index-named_002drow_002dpattern-1"> &para;</a></span></dt>
+<dd><p>Returns a pattern, as a parse tree, that matches a named row at
+<var class="var">stage</var>. The <var class="var">name</var> is one of those listed below. If <var class="var">stage</var> is not supplied
+it defaults to the current value of <code class="code">*default-stage*</code>. If <var class="var">covered</var>, a
+generalized boolean, is non-nil the <code class="code">row</code>(&rsquo;s) that will be matched will assume an
+implicit tenor. If <var class="var">covered</var> is not supplied it defaults to <code class="code">nil</code> for even stages
+and <code class="code">t</code> for odd stages. If there is no such named row known that corresponds to the
+values of <var class="var">stage</var> and <var class="var">covered</var> <code class="code">nil</code> is returned. Signals an error if
+<var class="var">name</var> is not a keyword or is not a known named row name as enumerated below, or if
+<var class="var">stage</var> is not a <code class="code">stage</code>.
+</p>
+<p>The supported values for <var class="var">name</var>, and the stages at which they are defined, are:
+</p><dl class="table">
+<dt><code class="code">:backrounds</code></dt>
+<dd><p>any stage
+</p></dd>
+<dt><code class="code">:queens</code></dt>
+<dd><p>uncovered singles and above, or covered two and above.
+</p></dd>
+<dt><code class="code">:kings</code></dt>
+<dd><p>uncovered minimus and above, or covered singles and above; note that kings at uncovered
+minor or covered doubles is the same row as Whittingtons at those stages
+</p></dd>
+<dt><code class="code">:whittingtons</code></dt>
+<dd><p>uncovered minor and above, or covered doubles and above; note that Whittingtons at
+uncovered minor or covered doubles is the same row as kings at those stages
+</p></dd>
+<dt><code class="code">:double-whittingtons</code></dt>
+<dd><p>covered cinques or uncovered maximus, only
+</p></dd>
+<dt><code class="code">:roller-coaster</code></dt>
+<dd><p>covered caters or uncovered royal, only
+</p></dd>
+<dt><code class="code">:near-miss</code></dt>
+<dd><p>any stage
+</p></dd>
+</dl>
+
+<div class="example">
+<div class="group"><pre class="example-preformatted"> (format-pattern (named-row-pattern :whittingtons 10 nil))
+     &rArr; &quot;1234975680&quot;
+ (format-pattern (named-row-pattern :whittingtons 9 t)
+     &rArr; &quot;123497568&quot;
+ (format-pattern (named-row-pattern :whittingtons 9 nil))
+     &rArr; &quot;123864579&quot;
+ (named-row-pattern :whittingtons 4)
+     &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="pattern_002dparse_002derror_002dtype"></a><a class="index-entry-id" id="index-pattern_002dparse_002derror"></a>
+<dl class="first-deftp def-block">
+<dt class="deftp def-line" id="index-pattern_002dparse_002derror-1"><span class="category-def">Type: </span><span><strong class="def-name">pattern-parse-error</strong><a class="copiable-link" href="#index-pattern_002dparse_002derror-1"> &para;</a></span></dt>
+<dd><p>An error signaled when attempting to parse a malformed row pattern.
+Contains three potenitally useful slots accessible with <code class="code">pattern-parse-error-message</code>,
+<code class="code">pattern-parse-error-pattern</code> and <code class="code">pattern-parse-error-index</code>.
+</p></dd></dl>
+
+<ul class="mini-toc">
+<li><a href="#Counting-matches">Counting matches</a></li>
+</ul>
+<hr>
+<div class="section-level-extent" id="Counting-matches">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Patterns" rel="up">Patterns</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="Counting-matches-1"><span>4.1 Counting matches<a class="copiable-link" href="#Counting-matches-1"> &para;</a></span></h3>
+
+<p>Often one would like to count how many times a variety of patterns match many different
+rows. To support this use Roan provides <code class="code">match-counter</code>s. After creating a
+<code class="code">match-counter</code> with <code class="code">make-match-counter</code> you add a variety of patterns to it,
+with <code class="code">add-pattern</code> or <code class="code">add-patterns</code>, each with a label, which will typically
+be a symbol or string, but can be any Lisp object. You then apply the <code class="code">match-counter</code>
+to <code class="code">row</code>s with <code class="code">record-matches</code>, and query how many matches have occurred with
+<code class="code">match-counter-counts</code>.
+</p>
+<p>The order in which patterns are added to a <code class="code">match-counter</code> is preserved, and is
+reflected in the return values of <code class="code">match-counter-labels</code>, and
+<code class="code">match-counter-counts</code> called without a second argument. Replacing an existing
+pattern by adding a different one with a <var class="var">label</var> that is <code class="code">equalp</code> to an existing
+one does not change the order, but deleting a pattern with <code class="code">remove-pattern</code> and
+then re-adding it does move it to the end of the order. When a pattern has been replaced
+by one with an <code class="code">equalp</code> <var class="var">label</var> that is not <code class="code">eq</code> to the original <var class="var">label</var>
+which label is retained is undefined.
+</p>
+<p>A <code class="code">match-counter</code> also distinguishes matches that occur at handstroke from those
+that occur at backstroke. Typically you tell the <code class="code">match-counter</code> which stroke the
+next <code class="code">row</code> it is asked to match is on, and it then it automatically alternates
+handstrokes and backstrokes for subsequent <code class="code">row</code>s. For patterns that span two
+rows, such as wraps, the stroke is considered to be that between the rows; for example a
+wrap of rounds that spans a backstroke lead would be considered to be &ldquo;at&rdquo; backstroke.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (let ((m (make-match-counter 8)))
+   (add-patterns m '((cru &quot;*[456][456]78&quot;)
+                     (wrap &quot;?*12345678*?&quot; t)
+                     (lb4 &quot;1-7%4*|*1-7%4&quot;)))
+   (loop for (row following)
+         on (generate-rows #8!36.6.5.3x5.56.5,2)
+         do (record-matches m row following))
+   (values (match-counter-counts m)))
+     &rArr; ((cru . 3) (wrap . 1) (lb4 . 5))
+</pre></div></div>
+<a class="anchor" id="match_002dcounter_002dtype"></a><a class="index-entry-id" id="index-match_002dcounter"></a>
+<dl class="first-deftp def-block">
+<dt class="deftp def-line" id="index-match_002dcounter-1"><span class="category-def">Type: </span><span><strong class="def-name">match-counter</strong><a class="copiable-link" href="#index-match_002dcounter-1"> &para;</a></span></dt>
+<dd><p>Used to collect statistics on how many rows match a variety of patterns.
+</p></dd></dl>
+<a class="anchor" id="make_002dmatch_002dcounter"></a><a class="index-entry-id" id="index-make_002dmatch_002dcounter"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-make_002dmatch_002dcounter-1"><span class="category-def">Function: </span><span><strong class="def-name">make-match-counter</strong> <var class="def-var-arguments">&amp;optional stage</var><a class="copiable-link" href="#index-make_002dmatch_002dcounter-1"> &para;</a></span></dt>
+<dd><p>Returns a fresh <code class="code">match-counter</code>, initially containing no patterns, that is
+configured to attempt to match patterns against <code class="code">row</code>s of <var class="var">stage</var> bells.
+If not supplied, <var class="var">stage</var> defaults to the current value of <code class="code">*default-stage*</code>.
+Attempts to add patterns only appropriate for a different stage or match rows of a
+different stage with <code class="code">record-matches</code> will signal an error.
+</p></dd></dl>
+<a class="anchor" id="add_002dpattern"></a><a class="index-entry-id" id="index-add_002dpattern"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-add_002dpattern-1"><span class="category-def">Function: </span><span><strong class="def-name">add-pattern</strong> <var class="def-var-arguments">counter label pattern &amp;optional double-row-p</var><a class="copiable-link" href="#index-add_002dpattern-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-add_002dpatterns"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-add_002dpatterns-1"><span class="category-def">Function: </span><span><strong class="def-name">add-patterns</strong> <var class="def-var-arguments">counter lists</var><a class="copiable-link" href="#index-add_002dpatterns-1"> &para;</a></span></dt>
+<dd><p>Adds one or more patterns to those matched by the <code class="code">match-counter</code> <var class="var">count</var>.
+A single pattern, <var class="var">pattern</var>, is added, with label <var class="var">label</var>, by <code class="code">add-pattern</code>.
+If the generalized boolean <var class="var">double-row-p</var> is true two rows (which typically should be
+consecutive) will be matched against <var class="var">pattern</var>, and others one row; if not supplied
+<var class="var">double-row-p</var> is <code class="code">nil</code>. Multiple patterns may be added together with
+<code class="code">add-patterns</code>: <var class="var">lists</var> should be a list of lists, where the sublists are of the
+form <code class="code">(<var class="var">label</var> <var class="var">pattern</var> &amp;optional <var class="var">double-row-p</var>)</code>, and the patterns are
+added in the order given. In either case the <var class="var">pattern</var> may be either a string or list
+structure that is a parsed pattern, such as returned by <code class="code">parse-pattern</code>. If
+<var class="var">label</var> is <code class="code">equalp</code> to the label of a pattern already added to <var class="var">counter</var> that
+pattern will be replaced, and its corresponding counts reset to zero. Either function
+reeturns <var class="var">counter</var>. Either signals a <code class="code">type-error</code> if <var class="var">counter</var> is not a
+<code class="code">match-counter</code>. Signals an error if any of the <var class="var">pattern</var>s are not an
+appropriate pattern for the stage of <var class="var">counter</var>.
+</p></dd></dl>
+<a class="anchor" id="remove_002dpattern"></a><a class="index-entry-id" id="index-remove_002dpattern"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-remove_002dpattern-1"><span class="category-def">Function: </span><span><strong class="def-name">remove-pattern</strong> <var class="def-var-arguments">counter label</var><a class="copiable-link" href="#index-remove_002dpattern-1"> &para;</a></span></dt>
+<dd><p>Removes any pattern in <code class="code">method-counter</code> <var class="var">count</var> with its label <code class="code">equalp</code>
+to <var class="var">label</var>. Returns <code class="code">t</code> if such a pattern was found and removed, and <code class="code">nil</code>
+otherwise. Signals a <code class="code">type-error</code> if <var class="var">count</var> is not a <code class="code">method-counter</code>.
+</p></dd></dl>
+<a class="anchor" id="remove_002dall_002dpatterns"></a><a class="index-entry-id" id="index-remove_002dall_002dpatterns"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-remove_002dall_002dpatterns-1"><span class="category-def">Function: </span><span><strong class="def-name">remove-all-patterns</strong> <var class="def-var-arguments">counter</var><a class="copiable-link" href="#index-remove_002dall_002dpatterns-1"> &para;</a></span></dt>
+<dd><p>Removes all the patterns in the <code class="code">method-counter</code> <var class="var">counter</var>, and returns a
+positive integer, the number of patterns so removed, if any, or <code class="code">nil</code> if <var class="var">counter</var>
+had no patterns. Signals a <code class="code">type-error</code> if <var class="var">counter</var> is not a
+<code class="code">match-counter</code>.
+</p></dd></dl>
+<a class="anchor" id="match_002dcounter_002dpattern"></a><a class="index-entry-id" id="index-match_002dcounter_002dpattern"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-match_002dcounter_002dpattern-1"><span class="category-def">Function: </span><span><strong class="def-name">match-counter-pattern</strong> <var class="def-var-arguments">counter label &amp;optional as-string upper-case</var><a class="copiable-link" href="#index-match_002dcounter_002dpattern-1"> &para;</a></span></dt>
+<dd><p>Returns two values: the first is the pattern whose label in <var class="var">count</var> is
+<code class="code">equalp</code> to <var class="var">label</var>, if any, and otherwise <code class="code">nil</code>; the second is a
+generalized boolean if and only if the first value is non-nil and the pattern is to be
+matched against two rows rather than just one. If the generalized boolean <var class="var">as-string</var>
+is true the pattern is returned as a string, as by <code class="code">format-pattern</code>, with the case of
+any bells represented by letters controled by the generalized boolean <var class="var">upper-case</var>;
+and otherwise as a parse tree, as by <code class="code">parse-pattern</code>. A string return value may not
+be <code class="code">string-equal</code> to that added to <var class="var">counter</var>, but will match the same
+<code class="code">row</code>s. If <var class="var">as-string</var> is not supplied it defaults to true; if <var class="var">upper-case</var>
+is not supplied it defaults to the current value of <code class="code">*print-bells-upper-case*</code>.
+Signals a <code class="code">type-error</code> if <var class="var">counter</var> is not a <code class="code">match-counter</code>.
+</p></dd></dl>
+<a class="anchor" id="match_002dcounter_002dlabels"></a><a class="index-entry-id" id="index-match_002dcounter_002dlabels"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-match_002dcounter_002dlabels-1"><span class="category-def">Function: </span><span><strong class="def-name">match-counter-labels</strong> <var class="def-var-arguments">counter</var><a class="copiable-link" href="#index-match_002dcounter_002dlabels-1"> &para;</a></span></dt>
+<dd><p>Returns two lists, the labels of those patterns in <var class="var">count</var> that are matched against
+a single row, and those that are matched against two rows. Both lists are in the order in
+which the corresponding patterns were first added to <var class="var">counter</var>. Signals a
+<code class="code">type-error</code> if <var class="var">counter</var> is not a <code class="code">match-counter</code>.
+</p></dd></dl>
+<a class="anchor" id="match_002dcounter_002dcounts"></a><a class="index-entry-id" id="index-match_002dcounter_002dcounts"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-match_002dcounter_002dcounts-1"><span class="category-def">Function: </span><span><strong class="def-name">match-counter-counts</strong> <var class="def-var-arguments">counter &amp;optional label</var><a class="copiable-link" href="#index-match_002dcounter_002dcounts-1"> &para;</a></span></dt>
+<dd><p>Returns three values, the number of times the pattern with label <code class="code">equalp</code> to
+<var class="var">label</var> in <var class="var">counter</var> has matched <code class="code">row</code>s presented to it with
+<code class="code">record-matches</code> since <var class="var">counter</var> was reset or the relevent pattern was added to
+it. The first return value is the total number of matches, the second the number of
+matches at handstroke, and the third the number of matches at backstroke. If no
+<var class="var">label</var> is supplied it instead returns three a-lists mapping the labels of the
+patterns in <var class="var">counter</var> to the number of matches, again total, handstroke and
+backstroke. The elements of these a-lists are in the order in which the corresponding
+patterns were first added to <var class="var">counter</var>. Returns <code class="code">nil</code> if there is no pattern
+labeled <var class="var">label</var>. Signals a <code class="code">type-error</code> if <var class="var">counter</var> is not a
+<code class="code">match-counter</code>.
+</p></dd></dl>
+<a class="anchor" id="reset_002dmatch_002dcounter"></a><a class="index-entry-id" id="index-reset_002dmatch_002dcounter"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-reset_002dmatch_002dcounter-1"><span class="category-def">Function: </span><span><strong class="def-name">reset-match-counter</strong> <var class="def-var-arguments">counter</var><a class="copiable-link" href="#index-reset_002dmatch_002dcounter-1"> &para;</a></span></dt>
+<dd><p>Resets all the counts associated with all the patterns in <var class="var">counter</var> to zero.
+Signals a <code class="code">type-error</code> if <var class="var">counter</var> is not a <code class="code">match-counter</code>.
+</p></dd></dl>
+<a class="anchor" id="match_002dcounter_002dhandstroke_002dp"></a><a class="index-entry-id" id="index-match_002dcounter_002dhandstroke_002dp"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-match_002dcounter_002dhandstroke_002dp-1"><span class="category-def">Function: </span><span><strong class="def-name">match-counter-handstroke-p</strong> <var class="def-var-arguments">counter</var><a class="copiable-link" href="#index-match_002dcounter_002dhandstroke_002dp-1"> &para;</a></span></dt>
+<dd><p>Returns a generalized boolean indicating that the next row presented to <var class="var">counter</var>
+will be a handstroke. Can be used with <code class="code">setf</code> to tell <var class="var">counter</var> whether or not it
+should consider the next row a handstroke or a backstroke. If not explicitly set again,
+either with <code class="code">(setf match-counter-handstroke-p)</code>, or with the <var class="var">handstroke-p</var>
+argument to <code class="code">record-matches</code>, whether or not subsequent rows will be considered
+handstroke or backstroke will alternate. Signals a <code class="code">type-error</code> if <var class="var">counter</var> is
+not a <code class="code">match-counter</code>.
+</p></dd></dl>
+<a class="anchor" id="record_002dmatches"></a><a class="index-entry-id" id="index-record_002dmatches"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-record_002dmatches-1"><span class="category-def">Function: </span><span><strong class="def-name">record-matches</strong> <var class="def-var-arguments">counter row &amp;optional following-row handstroke-p</var><a class="copiable-link" href="#index-record_002dmatches-1"> &para;</a></span></dt>
+<dd><p>Causes all the single-row patterns of <var class="var">counter</var> to be matched against <var class="var">row</var>,
+and, if a <var class="var">following-row</var> is supplied and not <code class="code">nil</code>, also all the double-row
+patterns to be matched against both rows. If the generalized boolean <var class="var">handstroke-p</var> is
+supplied it indicates whether <var class="var">row</var> is to be considered a handstroke or not, and,
+unless explicitly set again, either with the <var class="var">handstroke-p</var> argument to
+<code class="code">record-matches</code> by with <code class="code">(setf match-counter-handstroke-p)</code>, whether or not
+subsequent rows will be considered handroke or backstroke will alternate. That is,
+supplying a <var class="var">handtroke-p</var> argument to <code class="code">record-matches</code> is equivalent to calling
+<code class="code">(setf match-counter-handstoke-p)</code> immediately before it. Signals a <code class="code">type-error</code>
+if <var class="var">counter</var> is not a <code class="code">match-counter</code>, <var class="var">row</var> is not a <code class="code">row</code>, or
+<var class="var">following-row</var> is neither a <code class="code">row</code> nor <code class="code">nil</code>.
+</p></dd></dl>
+
+
+</div>
+</div>
+<hr>
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="Methods.html#Methods" rel="next">Methods</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="Hash_002dsets.html#Hash_002dsets" rel="prev">Hash-sets</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+
+
+
+</body>
+</html>

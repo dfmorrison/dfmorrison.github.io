@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.3, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is documentation of Roan, version 9.0.29.
+
+This documentation is copyright © 2015-2026 Donald F Morrison.
+
+Copying and distribution of this documentation, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved. -->
+<title>Libraries Used by Roan (Roan 9.0.29)</title>
+
+<meta name="description" content="Libraries Used by Roan (Roan 9.0.29)">
+<meta name="keywords" content="Libraries Used by Roan (Roan 9.0.29)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Documentation-Index.html" rel="index" title="Documentation Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html" rel="up" title="Top">
+<link href="History.html#History" rel="next" title="History">
+<link href="License.html" rel="prev" title="License">
+<style type="text/css">
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+ul.mark-bullet {list-style-type: disc}
+body {
+    max-width: 44em;
+    margin-left: 2em;
+    background-color: white;
+}
+
+</style>
+
+
+</head>
+
+<body>
+<div class="appendix-level-extent" id="Libraries-Used-by-Roan">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="History.html#History" rel="next">History</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="License.html" rel="prev">License</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h2 class="appendix" id="Libraries-Used-by-Roan-1"><span>Appendix B Libraries Used by Roan<a class="copiable-link" href="#Libraries-Used-by-Roan-1"> &para;</a></span></h2>
+
+<a class="anchor" id="dependencies"></a><a class="index-entry-id" id="index-library-3"></a>
+<a class="index-entry-id" id="index-license-2"></a>
+<a class="index-entry-id" id="index-dependencies"></a>
+
+<p>Roan loads the following libraries.
+Note that it does not include them as part of itself, it merely loads them, typically
+over the network from Quicklisp&rsquo;s library server.
+</p>
+<p>While most are in the public domain or
+offered under a permissive, open source license, some are offered with a
+<a class="url" href="https://en.wikipedia.org/wiki/Copyleft">copyleft</a> license.
+This should make no difference for using Roan in the usual way, with
+the libraries loaded from Quicklisp. But if you distribute something built with Roan
+and include the libraries in it you will have to pay attention to these licenses and be
+sure to adhere to them.
+</p>
+<ul class="itemize mark-bullet">
+<li><a class="url" href="https://common-lisp.net/project/alexandria/draft/alexandria.html">Alexandria</a> [public domain]
+</li><li><a class="url" href="https://common-lisp.net/project/iterate">Iterate</a> [MIT]
+</li><li><a class="url" href="https://edicl.github.io/cl-interpol/">CL-INTERPOL</a> [BSD]
+</li><li><a class="url" href="https://common-lisp.net/project/asdf/">ASDF</a> [MIT]
+</li><li><a class="url" href="http://weitz.de/cl-fad/">CL-FAD</a> [BSD]
+</li><li><a class="url" href="https://common-lisp.net/project/local-time/">local-time</a> [MIT]
+</li><li><a class="url" href="https://github.com/dardoria/uuid/blob/master/uuid.lisp">uuid</a> [LLGPL]
+</li><li><a class="url" href="http://weitz.de/cl-ppcre">CL-PPCRE</a> [BSD]
+</li><li><a class="url" href="http://weitz.de/drakma/">Drakma</a> [BSD]
+</li><li><a class="url" href="https://shinmera.github.io/plump/">Plump</a> [Artistic]
+</li><li><a class="url" href="https://github.com/froydnj/binascii">binascii</a> [BSD]
+</li><li><a class="url" href="https://common-lisp.net/project/zip/">ZIP</a> [BSD+LGPL]
+</li></ul>
+
+<p>Note that several of these libraries in turn load others, if embedding them in something
+you ship you may need to pay attention to the licenses of things transitively included.
+</p>
+<p>Several further libraries are used in the construction of Roan, but their license terms should
+not affect those who use or ship Roan itself, except possibly in so far as they need to use
+them to develop modifications to Roan.
+</p>
+<p>While not loaded during normal use of Roan, when running Roan&rsquo;s unit tests (see <a class="pxref" href="Building-and-Modifying-Roan.html#testing">testing</a>)
+the following library is also loaded and used.
+</p>
+<ul class="itemize mark-bullet">
+<li><a class="url" href="https://github.com/AccelerationNet/lisp-unit2">lisp-unit2</a> [MIT]
+</li></ul>
+
+<p>Also while not loaded during normal use of Roan, when building Roan&rsquo;s documentation
+(see <a class="pxref" href="Building-and-Modifying-Roan.html#building">building</a>) the following libraries are also loaded and used. One of these, too,
+<code class="code">trivial-documentation</code>, is offered under a copyleft license.
+To the best of my understanding this should not affect those simply copying or
+distributing Roan, so long as they do not include a copy of <code class="code">trivial-documentation</code>
+with it.
+</p>
+<ul class="itemize mark-bullet">
+<li><a class="url" href="http://weitz.de/cl-fad/">CL-FAD</a> [BSD]
+</li><li><a class="url" href="https://github.com/eugeneia/trivial-documentation">trivial-documentation</a> [Affero GPL]
+</li></ul>
+
+
+<a class="index-entry-id" id="index-UNIX"></a>
+<a class="index-entry-id" id="index-Apollo"></a>
+<a class="index-entry-id" id="index-Domain-Lisp"></a>
+<a class="index-entry-id" id="index-Lisp-Machine"></a>
+<a class="index-entry-id" id="index-Macintosh-Common-Lisp"></a>
+<a class="index-entry-id" id="index-CLISP"></a>
+<a class="index-entry-id" id="index-C"></a>
+<a class="index-entry-id" id="index-bluelines"></a>
+<a class="index-entry-id" id="index-calls-1"></a>
+<a class="index-entry-id" id="index-drawing"></a>
+</div>
+<hr>
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="History.html#History" rel="next">History</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="License.html" rel="prev">License</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+
+
+
+</body>
+</html>

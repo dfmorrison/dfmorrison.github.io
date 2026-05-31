@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.3, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is documentation of Roan, version 9.0.29.
+
+This documentation is copyright © 2015-2026 Donald F Morrison.
+
+Copying and distribution of this documentation, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved. -->
+<title>Hash-sets (Roan 9.0.29)</title>
+
+<meta name="description" content="Hash-sets (Roan 9.0.29)">
+<meta name="keywords" content="Hash-sets (Roan 9.0.29)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Documentation-Index.html" rel="index" title="Documentation Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html" rel="up" title="Top">
+<link href="Patterns.html#Patterns" rel="next" title="Patterns">
+<link href="Fundamental-Types.html#Fundamental-Types" rel="prev" title="Fundamental Types">
+<style type="text/css">
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+dt.def-line {font-size: 1rem}
+span:hover a.copiable-link {visibility: visible}
+strong.def-name {font-family: monospace; font-weight: bold}
+body {
+    max-width: 44em;
+    margin-left: 2em;
+    background-color: white;
+}
+
+</style>
+
+
+</head>
+
+<body>
+<div class="chapter-level-extent" id="Hash_002dsets">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="Patterns.html#Patterns" rel="next">Patterns</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="Fundamental-Types.html#Fundamental-Types" rel="prev">Fundamental Types</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h2 class="chapter" id="Hash_002dsets-1"><span>3 Hash-sets<a class="copiable-link" href="#Hash_002dsets-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-sets"></a>
+<a class="index-entry-id" id="index-equalp-1"></a>
+<p>For change ringing applications it is often useful to manipulate sets of rows. That is,
+unordered collections of rows without duplicates. To support this and similar uses Roan
+supplies <code class="code">hash-set</code>s, which use <code class="code">equalp</code> as the comparison for whether or not
+two candidate elements are &ldquo;the same&rdquo;. In addition, <code class="code">equalp</code> can be used to compare
+two <code class="code">hash-set</code>s themselves for equality: they are <code class="code">equalp</code> if they contain the
+same number of elements, and each of the elements of one is <code class="code">equalp</code> to an element of
+the other.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (equalp (hash-set !12345678 !13572468 !12753468 !13572468)
+         (hash-set-union (hash-set !12753468 !12345678)
+                         (hash-set !13572468 !12753468 !13572468)))
+     &rArr; t
+</pre></div></div>
+<a class="anchor" id="hash_002dset_002dtype"></a><a class="index-entry-id" id="index-hash_002dset"></a>
+<dl class="first-deftp def-block">
+<dt class="deftp def-line" id="index-hash_002dset-3"><span class="category-def">Type: </span><span><strong class="def-name">hash-set</strong><a class="copiable-link" href="#index-hash_002dset-3"> &para;</a></span></dt>
+<dd><p>A set data structure, with element equality determined by <code class="code">equalp</code>. That is, no two
+elements of such a set will ever be <code class="code">equalp</code>, only one of those added remaining
+present in the set. Set membership testing, adding new elements to the set, and deletion
+of elements from the set is, on average, constant time. Two <code class="code">hash-set</code>s can be
+compared with <code class="code">equalp</code>: they are considered <code class="code">equalp</code> if and only if they contain
+the same number of elements, and each of the elements of one is <code class="code">equalp</code> to an
+element of the other.
+</p></dd></dl>
+<a class="anchor" id="make_002dhash_002dset"></a><a class="index-entry-id" id="index-make_002dhash_002dset"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-make_002dhash_002dset-1"><span class="category-def">Function: </span><span><strong class="def-name">make-hash-set</strong> <var class="def-var-arguments">&amp;key size rehash-size rehash-threshold initial-elements</var><a class="copiable-link" href="#index-make_002dhash_002dset-1"> &para;</a></span></dt>
+<dd><p>Returns a new <code class="code">hash-set</code>. If <var class="var">initial-elements</var> is supplied and non-nil,
+it must be a list of elements that the return value will contain; otherwise an empty set
+is returned. If any of <var class="var">size</var>, <var class="var">rehash-size</var> or <var class="var">rehash-threshold</var> are
+supplied they have meanings analagous to the eponymous arguments to
+<code class="code">make-hash-table</code>.
+</p></dd></dl>
+<a class="anchor" id="hash_002dset"></a><a class="index-entry-id" id="index-hash_002dset-1"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-hash_002dset-2"><span class="category-def">Function: </span><span><strong class="def-name">hash-set</strong> <var class="def-var-arguments">&amp;rest initial-elements</var><a class="copiable-link" href="#index-hash_002dset-2"> &para;</a></span></dt>
+<dd><p>Returns a new <code class="code">hash-set</code> containing the elements of <var class="var">initial-elements</var>. If no
+<var class="var">initial-elements</var> are supplied, the returned <code class="code">hash-set</code> is empty.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (hash-set 1 :foo 2 :foo 1) &rArr; #&lt;HASH-SET 3&gt;
+ (hash-set-elements (hash-set 1 :foo 2 :foo 1))
+     &rArr; (1 2 :foo)
+ (hash-set-elements (hash-set)) &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="hash_002dset_002dcopy"></a><a class="index-entry-id" id="index-hash_002dset_002dcopy"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-hash_002dset_002dcopy-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-copy</strong> <var class="def-var-arguments">set &amp;key size rehash-size rehash-threshold</var><a class="copiable-link" href="#index-hash_002dset_002dcopy-1"> &para;</a></span></dt>
+<dd><p>Returns a new <code class="code">hash-set</code> containing the same elements as the <code class="code">hash-set</code>
+<var class="var">set</var>. If any of <var class="var">size</var>, <var class="var">rehash-size</var> or <var class="var">rehash-threshold</var> are supplied
+they have the same meanings as the eponymous arguments to <code class="code">copy-hash-table</code>. A
+<code class="code">type-error</code> is signaled if <var class="var">set</var> is not a <code class="code">hash-set</code>.
+</p></dd></dl>
+
+<ul class="mini-toc">
+<li><a href="#Properties-of-hash_002dsets">Properties of hash-sets</a></li>
+<li><a href="#Modifying-hash_002dsets">Modifying hash-sets</a></li>
+<li><a href="#Iterating-over-hash_002dsets">Iterating over <code class="code">hash-set</code>s</a></li>
+</ul>
+<hr>
+<div class="section-level-extent" id="Properties-of-hash_002dsets">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Modifying-hash_002dsets" rel="next">Modifying hash-sets</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Hash_002dsets" rel="up">Hash-sets</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="Properties-of-hash_002dsets-1"><span>3.1 Properties of hash-sets<a class="copiable-link" href="#Properties-of-hash_002dsets-1"> &para;</a></span></h3>
+
+<a class="anchor" id="hash_002dset_002dcount"></a><a class="index-entry-id" id="index-hash_002dset_002dcount"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-hash_002dset_002dcount-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-count</strong> <var class="def-var-arguments">set</var><a class="copiable-link" href="#index-hash_002dset_002dcount-1"> &para;</a></span></dt>
+<dd><p>Returns a non-negative integer, the number of elements the <code class="code">hash-set</code> <var class="var">set</var>
+contains. Signals a <code class="code">type-error</code> if <var class="var">set</var> is not a <code class="code">hash-set</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (hash-set-count (hash-set !1234 !1342 !1234)) &rArr; 2
+ (hash-set-count (hash-set)) &rArr; 0
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="hash_002dset_002dempty_002dp"></a><a class="index-entry-id" id="index-hash_002dset_002dempty_002dp"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-hash_002dset_002dempty_002dp-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-empty-p</strong> <var class="def-var-arguments">set</var><a class="copiable-link" href="#index-hash_002dset_002dempty_002dp-1"> &para;</a></span></dt>
+<dd><p>True if and only if the <code class="code">hash-set</code> <var class="var">set</var> contains no elements. Signals a
+<code class="code">type-error</code> if <var class="var">set</var> is not a <code class="code">hash-set</code>.
+</p></dd></dl>
+<a class="anchor" id="hash_002dset_002delements"></a><a class="index-entry-id" id="index-hash_002dset_002delements"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-hash_002dset_002delements-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-elements</strong> <var class="def-var-arguments">set</var><a class="copiable-link" href="#index-hash_002dset_002delements-1"> &para;</a></span></dt>
+<dd><p>Returns a list of all the elements of the <code class="code">hash-set</code> <var class="var">set</var>. The order of the
+elements in the list is undefined, and may vary between two invocations of
+<code class="code">hash-set-elements</code>. Signals a <code class="code">type-error</code> if <var class="var">set</var> is not a
+<code class="code">hash-set</code>.
+</p><div class="example">
+<pre class="example-preformatted"> (hash-set-elements (hash-set 1 2 1 3 1)) &rArr; (3 2 1)
+</pre></div>
+</dd></dl>
+<a class="anchor" id="hash_002dset_002dmember"></a><a class="index-entry-id" id="index-hash_002dset_002dmember"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-hash_002dset_002dmember-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-member</strong> <var class="def-var-arguments">item set</var><a class="copiable-link" href="#index-hash_002dset_002dmember-1"> &para;</a></span></dt>
+<dd><p>True if and only if <var class="var">item</var> is an element of the <code class="code">hash-set</code> <var class="var">set</var>.
+Signals a <code class="code">type-error</code> if <var class="var">set</var> is not a <code class="code">hash-set</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (hash-set-member !1342 (hash-set !1243 !1342)) &rArr; t
+ (hash-set-member !1342 (hash-set !12435 !12425)) &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="hash_002dset_002dsubset_002dp"></a><a class="index-entry-id" id="index-hash_002dset_002dsubset_002dp"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-hash_002dset_002dsubset_002dp-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-subset-p</strong> <var class="def-var-arguments">subset superset</var><a class="copiable-link" href="#index-hash_002dset_002dsubset_002dp-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-hash_002dset_002dproper_002dsubset_002dp"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-hash_002dset_002dproper_002dsubset_002dp-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-proper-subset-p</strong> <var class="def-var-arguments">subset superset</var><a class="copiable-link" href="#index-hash_002dset_002dproper_002dsubset_002dp-1"> &para;</a></span></dt>
+<dd><p>The <code class="code">hash-set-subset-p</code> predicate is true if and only if all elements of
+<var class="var">subset</var> occur in <var class="var">superset</var>. The <code class="code">hash-set-proper-subset-p</code> predicate is
+true if and only that is the case and further that <code class="code">subset</code> does not contain all the
+elements of <var class="var">superset</var>. A <code class="code">type-error</code> is signaled if either argument is not a
+<code class="code">hash-set</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (hash-set-subset-p (hash-set 1) (hash-set 2 1) &rArr; t
+ (hash-set-proper-subset-p (hash-set 1) (hash-set 2 1) &rArr; t
+ (hash-set-subset-p (hash-set 1 2) (hash-set 2 1) &rArr; t
+ (hash-set-proper-subset-p (hash-set 1 2) (hash-set 2 1) &rArr; nil
+ (hash-set-subset-p (hash-set 1 3) (hash-set 2 1) &rArr; nil
+ (hash-set-proper-subset-p (hash-set 1 3) (hash-set 2 1) &rArr; nil
+</pre></div></div>
+</dd></dl>
+
+<hr>
+</div>
+<div class="section-level-extent" id="Modifying-hash_002dsets">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Iterating-over-hash_002dsets" rel="next">Iterating over <code class="code">hash-set</code>s</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Properties-of-hash_002dsets" rel="prev">Properties of hash-sets</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Hash_002dsets" rel="up">Hash-sets</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="Modifying-hash_002dsets-1"><span>3.2 Modifying hash-sets<a class="copiable-link" href="#Modifying-hash_002dsets-1"> &para;</a></span></h3>
+
+<a class="anchor" id="hash_002dset_002dclear"></a><a class="index-entry-id" id="index-hash_002dset_002dclear"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-hash_002dset_002dclear-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-clear</strong> <var class="def-var-arguments">set</var><a class="copiable-link" href="#index-hash_002dset_002dclear-1"> &para;</a></span></dt>
+<dd><p>Removes all elements from <var class="var">set</var>, and then returns the now empty <code class="code">hash-set</code>.
+Signals a <code class="code">type-error</code> if <var class="var">set</var> is not a <code class="code">hash-set</code>.
+</p></dd></dl>
+<a class="anchor" id="hash_002dset_002dadjoin"></a><a class="index-entry-id" id="index-hash_002dset_002dadjoin"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-hash_002dset_002dadjoin-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-adjoin</strong> <var class="def-var-arguments">set &amp;rest elements</var><a class="copiable-link" href="#index-hash_002dset_002dadjoin-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-hash_002dset_002dadjoin_002dlist_002delements"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-hash_002dset_002dadjoin_002dlist_002delements-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-adjoin-list-elements</strong> <var class="def-var-arguments">set list</var><a class="copiable-link" href="#index-hash_002dset_002dadjoin_002dlist_002delements-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-hash_002dset_002dnadjoin"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-hash_002dset_002dnadjoin-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-nadjoin</strong> <var class="def-var-arguments">set &amp;rest elements</var><a class="copiable-link" href="#index-hash_002dset_002dnadjoin-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-hash_002dset_002dnadjoin_002dlist_002delements"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-hash_002dset_002dnadjoin_002dlist_002delements-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-nadjoin-list-elements</strong> <var class="def-var-arguments">set list</var><a class="copiable-link" href="#index-hash_002dset_002dnadjoin_002dlist_002delements-1"> &para;</a></span></dt>
+<dd><p>Returns a <code class="code">hash-set</code> that contains all the elements of <var class="var">set</var> to which have
+been added the <var class="var">elements</var>, or the elements of the <var class="var">list</var>. As usual duplicate
+elements are not added, though exactly which of any potential duplicates are retained is
+undefined. The <code class="code">hash-set-adjoin</code> and <code class="code">hash-set-adjoin-list-elements</code> functions
+do not modify <var class="var">set</var> but might return it if no changes are needed; that is, the caller
+cannot depend upon it necessarily being a fresh copy. The <code class="code">hash-set-nadjoin</code> and
+<code class="code">hash-set-nadjoin-list-elements</code> functions modify <var class="var">set</var> (if one or more of the
+elements is not already contained therein) and return it. Note that
+<code class="code">hash-set-[n]adjoin-list-elements</code> differs from <code class="code">(apply #'hash-set-[n]adjoin
+...)</code> in that the latter can adjoin at most <code class="code">call-arguments-limit</code> elements. Signals
+a <code class="code">type-error</code> if <var class="var">set</var> is not a <code class="code">hash-set</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (hash-set-elements (hash-set-adjoin (hash-set 1 2 3) 4 3 2))
+     &rArr; (3 4 1 2)
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="hash_002dset_002dremove"></a><a class="index-entry-id" id="index-hash_002dset_002dremove"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-hash_002dset_002dremove-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-remove</strong> <var class="def-var-arguments">set &amp;rest elements</var><a class="copiable-link" href="#index-hash_002dset_002dremove-1"> &para;</a></span></dt>
+<dd><p>Returns a new <code class="code">hash-set</code> that contains all the elements of <var class="var">set</var> that are not
+<code class="code">equalp</code> to any of the <var class="var">elements</var>. Signals a <code class="code">type-error</code> if <var class="var">set</var> is
+not a <code class="code">hash-set</code>.
+</p></dd></dl>
+<a class="anchor" id="hash_002dset_002ddelete"></a><a class="index-entry-id" id="index-hash_002dset_002ddelete"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-hash_002dset_002ddelete-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-delete</strong> <var class="def-var-arguments">set &amp;rest elements</var><a class="copiable-link" href="#index-hash_002dset_002ddelete-1"> &para;</a></span></dt>
+<dd><p>Deletes from the <code class="code">hash-set</code> <var class="var">set</var> all elements <code class="code">equalp</code> to elements of
+<var class="var">elements</var>, and returns the modified set. Signals a <code class="code">type-error</code> if <var class="var">set</var> is
+not a <code class="code">hash-set</code>.
+</p></dd></dl>
+<a class="anchor" id="hash_002dset_002dpop"></a><a class="index-entry-id" id="index-hash_002dset_002dpop"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-hash_002dset_002dpop-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-pop</strong> <var class="def-var-arguments">set &amp;optional error-p empty-value</var><a class="copiable-link" href="#index-hash_002dset_002dpop-1"> &para;</a></span></dt>
+<dd><p>Deletes an element from <var class="var">set</var> and returns it. The particular element chosen to be
+removed and returned is undefined. If <var class="var">set</var> is empty returns <var class="var">empty-value</var> if the
+generalized Boolean <var class="var">error-p</var> is false and otherwise signals an error. By default
+<var class="var">error-p</var> is true and <var class="var">empty-value</var> is <code class="code">nil</code>. Signals a <code class="code">type-error</code> if
+<var class="var">set</var> is not a <code class="code">hash-set</code>.
+</p></dd></dl>
+<a class="anchor" id="hash_002dset_002ddifference"></a><a class="index-entry-id" id="index-hash_002dset_002ddifference"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-hash_002dset_002ddifference-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-difference</strong> <var class="def-var-arguments">set &amp;rest more-sets</var><a class="copiable-link" href="#index-hash_002dset_002ddifference-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-hash_002dset_002dndifference"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-hash_002dset_002dndifference-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-ndifference</strong> <var class="def-var-arguments">set &amp;rest more-sets</var><a class="copiable-link" href="#index-hash_002dset_002dndifference-1"> &para;</a></span></dt>
+<dd><p>Returns a <code class="code">hash-set</code> containing all the elements of <var class="var">set</var> that are not
+contained in any of <var class="var">more-sets</var>. The <code class="code">hash-set-difference</code> version returns a
+fresh <code class="code">hash-set</code>, and does not modify <var class="var">set</var> or any of the <var class="var">more-sets</var>. The
+<code class="code">hash-set-ndifference</code> version modifies and returns <var class="var">set</var>, but does not modify
+any of <var class="var">more-sets</var>. Signals a <code class="code">type-error</code> if <var class="var">set</var> or any of <var class="var">more-sets</var>
+are not <code class="code">hash-set</code>s.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (hash-set-elements
+   (hash-set-difference
+     (hash-set !12345 !23451 !34512 !45123)
+     (hash-set !23451 !54321 !12345)))
+     &rArr; (!34512 !45123)
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="hash_002dset_002dunion"></a><a class="index-entry-id" id="index-hash_002dset_002dunion"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-hash_002dset_002dunion-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-union</strong> <var class="def-var-arguments">set &amp;rest more-sets</var><a class="copiable-link" href="#index-hash_002dset_002dunion-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-hash_002dset_002dnunion"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-hash_002dset_002dnunion-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-nunion</strong> <var class="def-var-arguments">set &amp;rest more-sets</var><a class="copiable-link" href="#index-hash_002dset_002dnunion-1"> &para;</a></span></dt>
+<dd><p>Returns a <code class="code">hash-set</code> containing all the elements that appear in <var class="var">set</var> or in
+any of the <var class="var">more-sets</var>. The <code class="code">hash-set-union</code> function does not modify <var class="var">set</var>
+or any of the <var class="var">more-sets</var>, but may return any one of them unmodified if appropriate;
+the caller should not assume a fresh <code class="code">hash-set</code> is returned. The
+<code class="code">hash-set-nunion</code> function always returns <var class="var">set</var>, modifying it if necessary; it
+does not modify any of the <var class="var">more-sets</var>. Signals a <code class="code">type-error</code> if <var class="var">set</var> or
+any of the <var class="var">more-sets</var> are not <code class="code">hash-set</code>s.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (coerce
+   (hash-set-elements
+     (hash-set-union
+       (apply #'hash-set (coerce &quot;abcdef&quot; 'list))
+       (apply #'hash-set (coerce &quot;ACEG&quot; 'list))))
+   'string)
+     &rArr; &quot;FaeGbcd&quot;
+ (hash-set-empty-p (hash-set-union)) &rArr; t
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="hash_002dset_002dintersection"></a><a class="index-entry-id" id="index-hash_002dset_002dintersection"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-hash_002dset_002dintersection-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-intersection</strong> <var class="def-var-arguments">set &amp;rest more-sets</var><a class="copiable-link" href="#index-hash_002dset_002dintersection-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-hash_002dset_002dnintersection"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-hash_002dset_002dnintersection-1"><span class="category-def">Function: </span><span><strong class="def-name">hash-set-nintersection</strong> <var class="def-var-arguments">set &amp;rest more-sets</var><a class="copiable-link" href="#index-hash_002dset_002dnintersection-1"> &para;</a></span></dt>
+<dd><p>Returns a <code class="code">hash-set</code> such at all of its elements are also elements of <var class="var">set</var>
+and of all the <var class="var">more-sets</var>. The <code class="code">hash-set-intersection</code> function does not modify
+<var class="var">set</var> or any of the <var class="var">more-sets</var>, but may return any one of them unmodified if
+appropriate; the caller should not assume a fresh <code class="code">hash-set</code> is returned. The
+<code class="code">hash-set-nintersection</code> function always returns <var class="var">set</var>, modifying it if
+necessary; it does not modify any of the <var class="var">more-sets</var>. Signals a <code class="code">type-error</code> if
+<var class="var">set</var> or any of the <var class="var">more-sets</var> are not <code class="code">hash-set</code>s.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (coerce
+   (hash-set-elements
+     (hash-set-intersection
+       (apply #'hash-set (coerce &quot;abcdef&quot; 'list))
+       (apply #'hash-set (coerce &quot;ACEG&quot; 'list))))
+   'string)
+     &rArr; &quot;EaC&quot;
+</pre></div></div>
+</dd></dl>
+
+<hr>
+</div>
+<div class="section-level-extent" id="Iterating-over-hash_002dsets">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Modifying-hash_002dsets" rel="prev">Modifying hash-sets</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Hash_002dsets" rel="up">Hash-sets</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="Iterating-over-hash_002dsets-1"><span>3.3 Iterating over <code class="code">hash-set</code>s<a class="copiable-link" href="#Iterating-over-hash_002dsets-1"> &para;</a></span></h3>
+
+<a class="anchor" id="map_002dhash_002dset"></a><a class="index-entry-id" id="index-map_002dhash_002dset"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-map_002dhash_002dset-1"><span class="category-def">Function: </span><span><strong class="def-name">map-hash-set</strong> <var class="def-var-arguments">function set</var><a class="copiable-link" href="#index-map_002dhash_002dset-1"> &para;</a></span></dt>
+<dd><p>Calls <var class="var">function</var> on each element of the <code class="code">hash-set</code> <var class="var">set</var>, and returns
+<code class="code">nil</code>. The order in which the elements of <var class="var">set</var> have <var class="var">function</var> applied to
+them is undefined. With one exception, the behavior is undefined if <var class="var">function</var>
+attempts to modify the contents of <var class="var">set</var>: <var class="var">function</var> may call
+<code class="code">hash-set-delete</code> to delete the current element, but no other. A <code class="code">type-error</code> is
+signaled if <var class="var">set</var> is not a <code class="code">hash-set</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (let ((r nil))
+   (map-hash-set #'(lambda (e)
+                     (push (list e (in-course-p e)) r))
+                 (hash-set !135246 !123456 !531246))
+   r)
+     &rArr; ((!135246 nil) (!531246 nil) (!123456 t))
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="do_002dhash_002dset"></a><a class="index-entry-id" id="index-do_002dhash_002dset"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-do_002dhash_002dset-1"><span class="category-def">Macro: </span><span><strong class="def-name">do-hash-set</strong> <var class="def-var-arguments">(var set &amp;optional result-form) &amp;body body</var><a class="copiable-link" href="#index-do_002dhash_002dset-1"> &para;</a></span></dt>
+<dd><p>Evaluates the <var class="var">body</var>, an implicit <code class="code">progn</code>, repeatedly with the symbol
+<code class="code">var</code> bound to the elements of the <code class="code">hash-set</code> <var class="var">set</var>. Returns the result of
+evaluating <var class="var">result-form</var>, which defaults to <code class="code">nil</code>, after the last iteration. A
+value may be returned by using <code class="code">return</code> or <code class="code">return-from nil</code>, in which case
+<var class="var">result-form</var> is not evaluated. The order in which the elements of <var class="var">set</var> are bound
+to <code class="code">var</code> for evaluating <var class="var">body</var> is undefined. With one exception the behavior is
+undefined if <var class="var">body</var> attempts to modify the contents of <var class="var">set</var>: <var class="var">function</var> may
+call <code class="code">hash-set-delete</code> to delete the current element, but no other. A
+<code class="code">type-error</code> is signaled if <var class="var">set</var> is not a <code class="code">hash-set</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (let ((r nil))
+   (do-hash-set (e (hash-set !135246 !123456 !531246) r)
+     (push (list e (in-course-p e) r))))
+     &rArr; ((!531246 nil) (!123456 t) (!135246 nil))
+</pre></div></div>
+</dd></dl>
+
+<a class="index-entry-id" id="index-iterate"></a>
+<p>In addition, it is possible to iterate over a <code class="code">hash-set</code> using
+the <a class="url" href="https://common-lisp.net/project/iterate/"><code class="code">iterate</code></a> macro,
+by using the <code class="code">for...:in-hash-set...</code> construct.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted">(iter (for element :in-hash-set (hash-set !135246 !123456 !531246))
+      (collect (list element (in-course-p element))))
+    &rArr; ((!531246 nil) (!135246 nil) (!123456 t))
+</pre></div></div>
+
+
+</div>
+</div>
+<hr>
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="Patterns.html#Patterns" rel="next">Patterns</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="Fundamental-Types.html#Fundamental-Types" rel="prev">Fundamental Types</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+
+
+
+</body>
+</html>

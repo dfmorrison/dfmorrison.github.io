@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.3, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is documentation of Roan, version 9.0.29.
+
+This documentation is copyright © 2015-2026 Donald F Morrison.
+
+Copying and distribution of this documentation, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved. -->
+<title>Fundamental Types (Roan 9.0.29)</title>
+
+<meta name="description" content="Fundamental Types (Roan 9.0.29)">
+<meta name="keywords" content="Fundamental Types (Roan 9.0.29)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Documentation-Index.html" rel="index" title="Documentation Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html" rel="up" title="Top">
+<link href="Hash_002dsets.html#Hash_002dsets" rel="next" title="Hash-sets">
+<link href="Introduction.html#Introduction" rel="prev" title="Introduction">
+<style type="text/css">
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+dt.def-line {font-size: 1rem}
+span:hover a.copiable-link {visibility: visible}
+strong.def-name {font-family: monospace; font-weight: bold}
+body {
+    max-width: 44em;
+    margin-left: 2em;
+    background-color: white;
+}
+
+</style>
+
+
+</head>
+
+<body>
+<div class="chapter-level-extent" id="Fundamental-Types">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="Hash_002dsets.html#Hash_002dsets" rel="next">Hash-sets</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="Introduction.html#Introduction" rel="prev">Introduction</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h2 class="chapter" id="Fundamental-Types-1"><span>2 Fundamental Types<a class="copiable-link" href="#Fundamental-Types-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-change-ringing-1"></a>
+<p>Central to change ringing is permuting sequences of a fixed collection of bells, where
+the cardinality of that collection is the stage. For modeling such things Roan
+provides the types <code class="code">bell</code>, <code class="code">stage</code> and <code class="code">row</code>, and various operations
+on them. It is also provides tools for reading and writing place notation.
+</p>
+<ul class="mini-toc">
+<li><a href="#Bells">Bells</a></li>
+<li><a href="#Stages">Stages</a></li>
+<li><a href="#Rows">Rows</a></li>
+<li><a href="#Place-notation">Place notation</a></li>
+</ul>
+<hr>
+<div class="section-level-extent" id="Bells">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Stages" rel="next">Stages</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Fundamental-Types" rel="up">Fundamental Types</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="Bells-1"><span>2.1 Bells<a class="copiable-link" href="#Bells-1"> &para;</a></span></h3>
+
+<p>Roan supports ringing on as few as 2, or as many as 24, bells. Bells are represented as
+small, non-negative integers less than this maximum stage. However, bells as the integers
+used in Roan are zero-based: the treble is zero, the tenor on eight is 7, and so on. The
+<code class="code">bell</code> type corresponds to integers in this range. There are functions for mapping
+bells to and from the characters corresponding to their usual textual representation in
+change ringing.
+<a class="anchor" id="bell_002dtype"></a><a class="index-entry-id" id="index-bell"></a>
+</p><dl class="first-deftp def-block">
+<dt class="deftp def-line" id="index-bell-1"><span class="category-def">Type: </span><span><strong class="def-name">bell</strong><a class="copiable-link" href="#index-bell-1"> &para;</a></span></dt>
+<dd><p>A representation of a bell. These are zero-based, small integers, so the treble is
+<code class="code">0</code>, the second is <code class="code">1</code>, up to the tenor is one less than the stage.
+</p></dd></dl>
+<a class="anchor" id="bell_002dname"></a><a class="index-entry-id" id="index-bell_002dname"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-bell_002dname-1"><span class="category-def">Function: </span><span><strong class="def-name">bell-name</strong> <var class="def-var-arguments">bell &amp;optional upper-case</var><a class="copiable-link" href="#index-bell_002dname-1"> &para;</a></span></dt>
+<dd><p>Returns a character denoting this <var class="var">bell</var>, or <code class="code">nil</code> if <var class="var">bell</var> is not a
+ <code class="code">bell</code>. If the character is alphabetic, an upper case letter is returned if the
+ generalized boolean <var class="var">upper-case</var> is true, and otherwise a lower case letter. If
+ <var class="var">upper-case</var> is not supplied it defaults to the current value of
+ <code class="code">*print-bells-upper-case*</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (bell-name 0) &rArr; #\1
+ (map 'string #'bell-name
+      (loop for i from 0 below +maximum-stage+
+            collect i))
+     &rArr; &quot;1234567890ETABCDFGHJKLMN&quot;
+ (bell-name -1) &rArr; nil
+ (bell-name +maximum-stage+) &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="bell_002dfrom_002dname"></a><a class="index-entry-id" id="index-bell_002dfrom_002dname"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-bell_002dfrom_002dname-1"><span class="category-def">Function: </span><span><strong class="def-name">bell-from-name</strong> <var class="def-var-arguments">char</var><a class="copiable-link" href="#index-bell_002dfrom_002dname-1"> &para;</a></span></dt>
+<dd><p>Returns the <code class="code">bell</code> denoted by the character designator <var class="var">char</var>, or <code class="code">nil</code>
+if it is not a character designator denoting a bell. The determination is case-insensitive.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (bell-from-name &quot;8&quot;) &rArr; 7
+ (bell-from-name &quot;E&quot;) &rArr; 10
+ (map 'list #'bell-from-name &quot;135246&quot;) &rArr; (0 2 4 1 3 5)
+ (bell-from-name &quot;%&quot;) &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="g_t_002aprint_002dbells_002dupper_002dcase_002a"></a><a class="index-entry-id" id="index-_002aprint_002dbells_002dupper_002dcase_002a"></a>
+<dl class="first-defvr def-block">
+<dt class="defvr def-line" id="index-_002aprint_002dbells_002dupper_002dcase_002a-1"><span class="category-def">Variable: </span><span><strong class="def-name">*print-bells-upper-case*</strong><a class="copiable-link" href="#index-_002aprint_002dbells_002dupper_002dcase_002a-1"> &para;</a></span></dt>
+<dd><p>When printing bell names that are letters, whether or not to use upper case letters by
+default. It is a generalized boolean, with an initial default value of <code class="code">t</code>.
+</p></dd></dl>
+
+<hr>
+</div>
+<div class="section-level-extent" id="Stages">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Rows" rel="next">Rows</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Bells" rel="prev">Bells</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Fundamental-Types" rel="up">Fundamental Types</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="Stages-1"><span>2.2 Stages<a class="copiable-link" href="#Stages-1"> &para;</a></span></h3>
+
+<p>The <code class="code">stage</code> type represents the subset of small, positive integers corresponding to
+the numbers of bells Roan supports. While Roan represents stages as small, positive
+integers, it is conventional in ringing to refer to them by names, such as &ldquo;Minor&rdquo; or
+&ldquo;Caters&rdquo;. There are functions for mapping stages, the integers used by Roan, to and from
+their conventional names as strings.
+<a class="anchor" id="stage_002dtype"></a><a class="index-entry-id" id="index-stage"></a>
+</p><dl class="first-deftp def-block">
+<dt class="deftp def-line" id="index-stage-3"><span class="category-def">Type: </span><span><strong class="def-name">stage</strong><a class="copiable-link" href="#index-stage-3"> &para;</a></span></dt>
+<dd><p>A supported number of bells, an integer between <code class="code">+minimum-stage+</code> and
+<code class="code">+maximum-stage+</code>, inclusive.
+</p></dd></dl>
+<a class="anchor" id="g_t_002bminimum_002dstage_002b"></a><a class="index-entry-id" id="index-_002bminimum_002dstage_002b"></a>
+<dl class="first-defvr def-block">
+<dt class="defvr def-line" id="index-_002bminimum_002dstage_002b-1"><span class="category-def">Constant: </span><span><strong class="def-name">+minimum-stage+</strong><a class="copiable-link" href="#index-_002bminimum_002dstage_002b-1"> &para;</a></span></dt>
+<dd><p>The smallest number of bells supported, 2.
+</p></dd></dl>
+<a class="anchor" id="g_t_002bmaximum_002dstage_002b"></a><a class="index-entry-id" id="index-_002bmaximum_002dstage_002b"></a>
+<dl class="first-defvr def-block">
+<dt class="defvr def-line" id="index-_002bmaximum_002dstage_002b-1"><span class="category-def">Constant: </span><span><strong class="def-name">+maximum-stage+</strong><a class="copiable-link" href="#index-_002bmaximum_002dstage_002b-1"> &para;</a></span></dt>
+<dd><p>The largest number of bells supported, 24.
+</p></dd></dl>
+<a class="anchor" id="stage_002dname"></a><a class="index-entry-id" id="index-stage_002dname"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-stage_002dname-1"><span class="category-def">Function: </span><span><strong class="def-name">stage-name</strong> <var class="def-var-arguments">stage</var><a class="copiable-link" href="#index-stage_002dname-1"> &para;</a></span></dt>
+<dd><p>Returns a string, the conventional name for this <var class="var">stage</var>, capitalized, or
+<code class="code">nil</code> if <var class="var">stage</var> is not an integer corresponding to a supported stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (stage-name 8) &rArr; &quot;Major&quot;
+ (stage-name 22) &rArr; &quot;Twenty-two&quot;
+ (stage-name (1+ +maximum-stage+)) &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="stage_002dfrom_002dname"></a><a class="index-entry-id" id="index-stage_002dfrom_002dname"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-stage_002dfrom_002dname-1"><span class="category-def">Function: </span><span><strong class="def-name">stage-from-name</strong> <var class="def-var-arguments">name</var><a class="copiable-link" href="#index-stage_002dfrom_002dname-1"> &para;</a></span></dt>
+<dd><p>Returns a stage, a small, positive integer, with its name the same as the string
+designator <var class="var">name</var>, or, if there is no stage with such a name, <code class="code">nil</code>. The
+determination is made case-insensitively.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (stage-from-name &quot;cinques&quot;) &rArr; 11
+ (stage-from-name &quot;no-such-stage&quot;) &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="g_t_002adefault_002dstage_002a"></a><a class="index-entry-id" id="index-_002adefault_002dstage_002a"></a>
+<dl class="first-defvr def-block">
+<dt class="defvr def-line" id="index-_002adefault_002dstage_002a-1"><span class="category-def">Variable: </span><span><strong class="def-name">*default-stage*</strong><a class="copiable-link" href="#index-_002adefault_002dstage_002a-1"> &para;</a></span></dt>
+<dd><p>An integer, the default value for optional or keyword arguments to many functions that
+must have a stage specified. See <a class="xref" href="#write_002drow"><code class="code">write-row</code></a>,
+<a class="ref" href="#row_002dstring"><code class="code">row-string</code></a>,
+<a class="ref" href="#write_002dplace_002dnotation"><code class="code">write-place-notation</code></a> and
+<a class="ref" href="#place_002dnotation_002dstring"><code class="code">place-notation-string</code></a>.
+</p></dd></dl>
+
+
+<hr>
+</div>
+<div class="section-level-extent" id="Rows">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Place-notation" rel="next">Place notation</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Stages" rel="prev">Stages</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Fundamental-Types" rel="up">Fundamental Types</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="Rows-1"><span>2.3 Rows<a class="copiable-link" href="#Rows-1"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-immutable"></a>
+<p>The fundamental units of change ringing are rows and changes, permutations of a fixed set
+of bells. A distinction between them is often made, where a row is a permutation of bells
+and a change is a permutation taking one row to the next. In Roan they are both
+represented by the same data type, <code class="code">row</code>; <code class="code">row</code>s should be treated as immutable.
+</p>
+<a class="index-entry-id" id="index-Lisp-reader"></a>
+<a class="index-entry-id" id="index-reader-macro"></a>
+<a class="index-entry-id" id="index-bang"></a>
+<a class="index-entry-id" id="index-_0021-reader-macro"></a>
+<a class="index-entry-id" id="index-printing-rows"></a>
+<a class="index-entry-id" id="index-writing-rows"></a>
+<a class="index-entry-id" id="index-quote"></a>
+<p>The <a class="url" href="http://www.lispworks.com/documentation/HyperSpec/Body/23_.htm">Lisp reader</a> can be
+augmented by Roan to read <code class="code">row</code>s printed in the notation usually used by change
+ringers by using the &lsquo;<samp class="samp">!</samp>&rsquo; reader macro. For example, queens on twelve can be entered
+in Lisp as <code class="code">!13579E24680T</code>. When read with the &lsquo;<samp class="samp">!</samp>&rsquo; reader macro bells
+represented by alphabetic characters can be either upper or lower case; so queens on
+twelve can also be entered as <code class="code">!13579e24680t</code> or <code class="code">!13579e24680T</code>.
+</p>
+<p>To support the common case of writing lead heads of treble dominated methods if the treble
+is leading it can be omitted. Thus, queens on twelve can also be entered as
+<code class="code">!3579E24680T</code>. Apart from a leading treble, however, if any bell is omitted from a
+row written with a leading &lsquo;<samp class="samp">!</samp>&rsquo; character an error will be signaled.
+</p>
+<p>Note that <code class="code">row</code>s are Lisp atoms, and thus literal values can be written using
+&lsquo;<samp class="samp">!</samp>&rsquo; notation without quoting, though quoting <code class="code">row</code>s read that way will do no
+harm when they are evaluated.
+</p>
+<p>This &lsquo;<samp class="samp">!</samp>&rsquo; syntax can be turned on and off by using <a class="ref" href="#roan_002dsyntax">roan-syntax</a>. By default it is
+off when Roan is loaded. It is also possible to control this syntax by using
+<a class="url" href="https://github.com/melisgl/named-readtables/">Named Readtables</a>; see
+<a class="ref" href="#roan_002dsyntax">roan-syntax</a> for further details.
+</p>
+<p>Similarly, <code class="code">row</code>s are printed using this same notation,
+<a class="url" href="http://www.lispworks.com/documentation/HyperSpec/Body/v_pr_esc.htm#STprint-escapeST"><code class="code">*print-escape*</code></a>
+controlling whether or not they are preceded by &lsquo;<samp class="samp">!</samp>&rsquo; characters. Note that the
+characters used to represent bells in this printed representation differ from the small
+integer <code class="code">bell</code>s used to represent them internally, since the latter are zero based.
+For example, the treble is represented internally by the integer 0, but in this printed
+representation by the digit character &lsquo;<samp class="samp">1</samp>&rsquo;. When printing rows in this way a leading
+treble is not elided. And <code class="code">*print-bells-upper-case*</code> can be used to control the case
+of bells in the printed representation of <code class="code">row</code>s that are representated by letters,
+in cinques and above.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted">CL-USER&gt; !12753468
+!12753468
+CL-USER&gt; '!2753468
+!12753468
+CL-USER&gt; (format t &quot;with:    ~S~%without:  ~:*~A~%&quot; !TE0987654123)
+with:    !TE0987654123
+without:  TE0987654123
+NIL
+CL-USER&gt; (let ((roan:*print-bells-upper-case* nil))
+           (format nil &quot;~A&quot; !TE0987654123))
+&quot;te0987654123&quot;
+CL-USER&gt;
+</pre></div></div>
+
+<a class="index-entry-id" id="index-equality"></a>
+<a class="index-entry-id" id="index-comparing-rows"></a>
+<a class="index-entry-id" id="index-equalp"></a>
+<a class="index-entry-id" id="index-equal"></a>
+<p>Rows can be compared for equality using <code class="code">equalp</code> (but not <code class="code">equal</code>). That is,
+two different <code class="code">row</code> objects that correspond to the same ordering of the same number of
+bells will be <code class="code">equalp</code>. Hash tables with a <code class="code">:test</code> of <code class="code">equalp</code> are often
+useful with <code class="code">row</code>s. See <a class="xref" href="Hash_002dsets.html#hash_002dset">hash-set</a>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (equalp !13572468 !13572468) &rArr; t
+ (equalp !13572468 !12753468) &rArr; nil
+ (equalp !13572468 !1357246) &rArr; nil
+ (equalp !13572468 !3572468) &rArr; t
+</pre></div></div>
+<a class="anchor" id="row_002dtype"></a><a class="index-entry-id" id="index-row"></a>
+<dl class="first-deftp def-block">
+<dt class="deftp def-line" id="index-row-3"><span class="category-def">Type: </span><span><strong class="def-name">row</strong><a class="copiable-link" href="#index-row-3"> &para;</a></span></dt>
+<dd><p>A permutation of bells at a particular stage. The type <code class="code">row</code> is used to represent
+both change ringing rows and changes; that is, rows may be permuted by other rows.
+Instances of <code class="code">row</code> should normally be treated as immutable.
+</p></dd></dl>
+<a class="anchor" id="roan_002dsyntax"></a><a class="index-entry-id" id="index-roan_002dsyntax"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-roan_002dsyntax-1"><span class="category-def">Macro: </span><span><strong class="def-name">roan-syntax</strong> <var class="def-var-arguments">&amp;optional on-off modify</var><a class="copiable-link" href="#index-roan_002dsyntax-1"> &para;</a></span></dt>
+<dd><p>Turns on or off the read macros for &lsquo;<samp class="samp">!</samp>&rsquo; and &lsquo;<samp class="samp">#!</samp>&rsquo;, for reading rows and place
+notation.
+</p>
+<p>If the generalized boolean <var class="var">on-off</var> is true, the default, it turns on these read
+macros. Unless the generalized boolean <var class="var">modify</var> is false, the default, it first pushes
+the current read table onto a stack, modifying a copy of it and making that copy the
+current read table. If <var class="var">modify</var> is true it makes no copy and instead modifies the
+current readtable in place.
+</p>
+<p>If <var class="var">on-off</var> is false it restores the previous readtable by popping the stack. If the
+stack is empty it sets the readtable to a new, standard one. When <var class="var">on-off</var> is false
+<var class="var">modify</var> is ignored.
+</p>
+<p>This is performed in an <code class="code">eval-when</code> context to ensure it happens at compile time as
+well as load and execute time.
+</p>
+<p>An alternative to using <code class="code">roan-syntax</code> is to use
+<a class="url" href="https://github.com/melisgl/named-readtables/">Named Readtables</a>. Roan defines two
+such readtables with names <code class="code">:roan</code> and <code class="code">:roan+interpol</code>. The former augments the
+initial Common Lisp read table with Roan&rsquo;s read macros, and the latter also adds the
+syntax from <a class="url" href="http://edicl.github.io/cl-interpol/">CL-INTERPOL</a>.
+</p></dd></dl>
+
+<a class="anchor" id="row_002dp_002dfunction"></a><a class="index-entry-id" id="index-row_002dp"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-row_002dp-1"><span class="category-def">Function: </span><span><strong class="def-name">row-p</strong> <var class="def-var-arguments">object</var><a class="copiable-link" href="#index-row_002dp-1"> &para;</a></span></dt>
+<dd><p>Non-nil if and only if <var class="var">object</var> is a <code class="code">row</code>.
+</p></dd></dl>
+
+<a class="anchor" id="stage"></a><a class="index-entry-id" id="index-stage-1"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-stage-2"><span class="category-def">Function: </span><span><strong class="def-name">stage</strong> <var class="def-var-arguments">row</var><a class="copiable-link" href="#index-stage-2"> &para;</a></span></dt>
+<dd><p>The number of <code class="code">bell</code>s of which the <code class="code">row</code> <var class="var">row</var> is a permutation.
+</p></dd></dl>
+<a class="anchor" id="write_002drow"></a><a class="index-entry-id" id="index-write_002drow"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-write_002drow-1"><span class="category-def">Function: </span><span><strong class="def-name">write-row</strong> <var class="def-var-arguments">row &amp;key stream escape upper-case</var><a class="copiable-link" href="#index-write_002drow-1"> &para;</a></span></dt>
+<dd><p>Writes <var class="var">row</var>, which should be a <code class="code">row</code>, to the indicated <var class="var">stream</var>.
+The case of any bells represented by letters is controlled by <var class="var">upper-case</var>, a
+generalized boolean defaulting to the current value of <code class="code">*print-bells-upper-case*</code>.
+The <var class="var">escape</var> argument, a generalized Boolean defaulting to the current value of
+<code class="code">*print-escape*</code>, determines whether or not to write it in a form that read can
+understand. Signals a <code class="code">type-error</code> if <var class="var">row</var> is not a <code class="code">row</code>, and the usual
+errors if <var class="var">stream</var> is not open for writing, etc.
+</p></dd></dl>
+<a class="anchor" id="row_002dstring"></a><a class="index-entry-id" id="index-row_002dstring"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-row_002dstring-1"><span class="category-def">Function: </span><span><strong class="def-name">row-string</strong> <var class="def-var-arguments">row &amp;optional upper-case</var><a class="copiable-link" href="#index-row_002dstring-1"> &para;</a></span></dt>
+<dd><p>Returns a string representing the <code class="code">row</code> <var class="var">row</var>. The case of any bells
+represented by letters is controlled by <var class="var">upper-case</var>, a generalized
+boolean defaulting to the current value of <code class="code">*print-bells-upper-case*</code>. Signals a
+<code class="code">type-error</code> if <var class="var">row</var> is not a <code class="code">row</code>.
+</p></dd></dl>
+<a class="anchor" id="read_002drow"></a><a class="index-entry-id" id="index-read_002drow"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-read_002drow-1"><span class="category-def">Function: </span><span><strong class="def-name">read-row</strong> <var class="def-var-arguments">&amp;optional stream eof-error-p eof-value recursive-p</var><a class="copiable-link" href="#index-read_002drow-1"> &para;</a></span></dt>
+<dd><p>Constructs and returns a <code class="code">row</code> from the conventional symbols for bells read from
+the <var class="var">stream</var>. The stage of the row read is determined by the bells present, that is by
+the largest bell for which a symbol is read. The treble can be elided, in which case it is
+assumed to be leading; a <code class="code">parse-error</code> is signaled if any other bell is omitted.
+Bells represented by letters can be either upper or lower case.
+</p></dd></dl>
+<a class="anchor" id="parse_002drow"></a><a class="index-entry-id" id="index-parse_002drow"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-parse_002drow-1"><span class="category-def">Function: </span><span><strong class="def-name">parse-row</strong> <var class="def-var-arguments">string &amp;key start end junk-allowed</var><a class="copiable-link" href="#index-parse_002drow-1"> &para;</a></span></dt>
+<dd><p>Contructs a <code class="code">row</code> from the conventional symbols for bells in the section of string
+<var class="var">string</var> delimited by <var class="var">start</var> and <var class="var">end</var>, possibly preceded or followed by
+whitespace. The treble can be elided, in which case it is assumed to be leading; a
+<code class="code">parse-error</code> is signaled if any other bell is omitted. Bells represented by letters
+can be either upper or lower case. If <var class="var">string</var> is not a string a <code class="code">type-error</code> is
+signaled. If the generalized boolean <var class="var">junk-allowed</var> is false, the default, an error
+will be signaled if additional non-whitespace characters follow the representation of a
+row. Returns two values: the <code class="code">row</code> read and a non-negative integer, the index into
+the string of the next character following all those that were parsed, including any
+trailing whitespace; if parsing consumed the whole of <var class="var">string</var>, the second value will
+be length of <var class="var">string</var>.
+</p></dd></dl>
+<a class="anchor" id="row"></a><a class="index-entry-id" id="index-row-1"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-row-2"><span class="category-def">Function: </span><span><strong class="def-name">row</strong> <var class="def-var-arguments">&amp;rest bells</var><a class="copiable-link" href="#index-row-2"> &para;</a></span></dt>
+<dd><p>Constructs and returns a <code class="code">row</code> containing the <var class="var">bells</var>, in the order they
+appear in the argument list. If the treble is not present, it defaults to being the first
+bell in the row. Duplicate bells or bells other than the treble missing result in an error
+being signaled.
+</p><div class="example">
+<pre class="example-preformatted"> (row 2 1 3 4 7 6 5) &rArr; !13245876
+</pre></div>
+</dd></dl>
+<a class="anchor" id="rounds"></a><a class="index-entry-id" id="index-rounds"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-rounds-1"><span class="category-def">Function: </span><span><strong class="def-name">rounds</strong> <var class="def-var-arguments">&amp;optional stage</var><a class="copiable-link" href="#index-rounds-1"> &para;</a></span></dt>
+<dd><p>Returns a <code class="code">row</code> representing rounds at the given <var class="var">stage</var>, which defaults to
+<code class="code">*default-stage*</code> Signals a <code class="code">type-error</code> if <var class="var">stage</var> is not a <code class="code">stage</code>,
+that is an integer between <code class="code">+minimum-stage+</code> and <code class="code">+maximum-stage+</code>, inclusive.
+</p></dd></dl>
+<a class="anchor" id="bell_002dat_002dposition"></a><a class="index-entry-id" id="index-bell_002dat_002dposition"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-bell_002dat_002dposition-1"><span class="category-def">Function: </span><span><strong class="def-name">bell-at-position</strong> <var class="def-var-arguments">row position</var><a class="copiable-link" href="#index-bell_002dat_002dposition-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-position_002dof_002dbell"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-position_002dof_002dbell-1"><span class="category-def">Function: </span><span><strong class="def-name">position-of-bell</strong> <var class="def-var-arguments">bell row</var><a class="copiable-link" href="#index-position_002dof_002dbell-1"> &para;</a></span></dt>
+<dd><p>The <code class="code">bell-at-position</code> function returns the <code class="code">bell</code> (that is, a small integer)
+at the given <var class="var">position</var> in the <var class="var">row</var>. The <code class="code">position-of-bell</code> function returns
+position of <var class="var">bell</var> in <var class="var">row</var>, or <code class="code">nil</code> if <var class="var">bell</var> does not appear in
+<var class="var">row</var>. The indexing into <var class="var">row</var> is zero-based; so, for example, the leading bell is
+at position 0, not 1. Signals an error if <var class="var">row</var> is not a <code class="code">row</code>, or if
+<var class="var">position</var> is not a non-negative integer or is too large for the stage of <var class="var">row</var>
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (bell-at-position !13572468 3) &rArr; 6
+ (bell-name (bell-at-position !13572468 3)
+     &rArr; #\7
+ (position-of-bell 6 !13572468) &rArr; 3
+ (position-of-bell (bell-from-name #7) !13572468)
+     &rArr; 3
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="bells_002dlist"></a><a class="index-entry-id" id="index-bells_002dlist"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-bells_002dlist-1"><span class="category-def">Function: </span><span><strong class="def-name">bells-list</strong> <var class="def-var-arguments">row</var><a class="copiable-link" href="#index-bells_002dlist-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-bells_002dvector"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-bells_002dvector-1"><span class="category-def">Function: </span><span><strong class="def-name">bells-vector</strong> <var class="def-var-arguments">row &amp;optional vector</var><a class="copiable-link" href="#index-bells_002dvector-1"> &para;</a></span></dt>
+<dd><p>The <code class="code">bells-list</code> function returns a fresh list of <code class="code">bell</code>s (small, non-negative
+integers, zero-based), the bells of <var class="var">row</var>, in the same order that they appear in
+<var class="var">row</var>. The <code class="code">bells-vector</code> function returns a vector of <code class="code">bell</code>s (small,
+non-negative integers, zero-based), the bells of <var class="var">row</var>, in the same order that they
+appear in <var class="var">row</var>. If <var class="var">vector</var> is not supplied or is <code class="code">nil</code> a freshly created,
+simple general vector is returned.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (bells-list !13572468) &rArr; (0 2 4 6 1 3 5 7)
+ (bells-vector !142536) &rArr; #(0 3 1 4 2 5)
+</pre></div></div>
+
+<p>If a non-nil <var class="var">vector</var> is supplied the <code class="code">bell</code>s are copied into it and it is
+returned. If <var class="var">vector</var> is longer than the stage of <var class="var">row</var> only the first elements of
+<var class="var">vector</var>, as many as the stage of <var class="var">row</var>, are over-written; the rest are unchanged.
+If <var class="var">vector</var> is shorter than the stage of <var class="var">row</var>, then, if it is adjustable, it is
+adjusted to be exactly as long as the stage of <var class="var">row</var>, and otherwise an error is
+signaled without any modifications made to the contents of <var class="var">vector</var> or its
+fill-pointer, if any. If <var class="var">vector</var> has a fill-pointer and is long enough to hold all
+the bells of <var class="var">row</var>, possibly after adjustment, its fill-pointer is set to the stage of
+<var class="var">row</var>.
+</p>
+<p>A <code class="code">type-error</code> is signaled if <var class="var">row</var> is not a <code class="code">row</code>. An error is signled if
+<var class="var">vector</var> is neither <code class="code">nil</code> nor a <code class="code">vector</code> with an element type that is a
+supertype of <code class="code">bell</code>, and of sufficient length or adjustable.
+</p></dd></dl>
+<a class="anchor" id="reversed_002drow"></a><a class="index-entry-id" id="index-reversed_002drow"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-reversed_002drow-1"><span class="category-def">Function: </span><span><strong class="def-name">reversed-row</strong> <var class="def-var-arguments">row</var><a class="copiable-link" href="#index-reversed_002drow-1"> &para;</a></span></dt>
+<dd><p>Returns a <code class="code">row</code> of the same stage as <var class="var">row</var> with its bells in the reverse
+order. A <code class="code">type-error</code> is signaled if <var class="var">row</var> is not a <code class="code">row</code>.
+</p><div class="example">
+<pre class="example-preformatted"> (reversed-row !32148765) &rArr; !56784123
+</pre></div>
+</dd></dl>
+
+<ul class="mini-toc">
+<li><a href="#Properties-of-rows">Properties of rows</a></li>
+<li><a href="#Permuting-rows">Permuting rows</a></li>
+</ul>
+<hr>
+<div class="subsection-level-extent" id="Properties-of-rows">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Permuting-rows" rel="next">Permuting rows</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Rows" rel="up">Rows</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h4 class="subsection" id="Properties-of-rows-1"><span>2.3.1 Properties of rows<a class="copiable-link" href="#Properties-of-rows-1"> &para;</a></span></h4>
+
+<a class="anchor" id="roundsp"></a><a class="index-entry-id" id="index-roundsp"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-roundsp-1"><span class="category-def">Function: </span><span><strong class="def-name">roundsp</strong> <var class="def-var-arguments">row</var><a class="copiable-link" href="#index-roundsp-1"> &para;</a></span></dt>
+<dd><p>True if and only if <var class="var">row</var> is a <code class="code">row</code> representing rounds at its stage.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (roundsp !23456) &rArr; t
+ (roundsp !123546) &rArr; nil
+ (roundsp 123456) &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="changep"></a><a class="index-entry-id" id="index-changep"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-changep-1"><span class="category-def">Function: </span><span><strong class="def-name">changep</strong> <var class="def-var-arguments">row</var><a class="copiable-link" href="#index-changep-1"> &para;</a></span></dt>
+<dd><p>True if and only if <var class="var">row</var> is a <code class="code">row</code> representing a permutation with no
+bell moving more than one place.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (changep !214365) &rArr; t
+ (changep !143265) &rArr; nil
+ (changep |214365|) &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="placesp"></a><a class="index-entry-id" id="index-placesp"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-placesp-1"><span class="category-def">Function: </span><span><strong class="def-name">placesp</strong> <var class="def-var-arguments">row &amp;rest places</var><a class="copiable-link" href="#index-placesp-1"> &para;</a></span></dt>
+<dd><p>Returns true if and only if <var class="var">row</var> is a (non-jump) change, with exactly the
+specified <var class="var">places</var> being made, and no others. To match a cross at even stages supply
+no <var class="var">places</var>.
+</p>
+<p>Signals a <code class="code">type-error</code> if <var class="var">row</var> is not a <code class="code">row</code> or any of <var class="var">places</var> are
+not <code class="code">bell</code>s. Signals an <code class="code">error</code> if any of <var class="var">places</var> are not less than the
+stage of <var class="var">row</var>, or are duplicated.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (placesp !21354768 2 7) &rArr; t
+ (placesp !21346587 2 7) &rArr; nil
+ (placesp !21354768 2) &rArr; nil
+ (placesp !2135476 2) &rArr; t
+ (placesp !21436587) &rArr; t
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="in_002dcourse_002dp"></a><a class="index-entry-id" id="index-in_002dcourse_002dp"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-in_002dcourse_002dp-1"><span class="category-def">Function: </span><span><strong class="def-name">in-course-p</strong> <var class="def-var-arguments">row</var><a class="copiable-link" href="#index-in_002dcourse_002dp-1"> &para;</a></span></dt>
+<dd><p>True if and only if <var class="var">row</var> is a <code class="code">row</code> representing an even permutation.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (in-course-p !132546) &rArr; t
+ (in-course-p !214365) &rArr; nil
+ (in-course-p &quot;132546&quot;) &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="involutionp"></a><a class="index-entry-id" id="index-involutionp"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-involutionp-1"><span class="category-def">Function: </span><span><strong class="def-name">involutionp</strong> <var class="def-var-arguments">row</var><a class="copiable-link" href="#index-involutionp-1"> &para;</a></span></dt>
+<dd><p>True if and only if <var class="var">row</var> is a <code class="code">row</code> that is its own inverse.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (involutionp !13248765) &rArr; t
+ (involutionp !13425678) &rArr; nil
+ (involutionp nil) &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="order"></a><a class="index-entry-id" id="index-order"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-order-1"><span class="category-def">Function: </span><span><strong class="def-name">order</strong> <var class="def-var-arguments">row</var><a class="copiable-link" href="#index-order-1"> &para;</a></span></dt>
+<dd><p>Returns a positive integer, the order of <var class="var">row</var>: the minimum number of times it must
+be permuted by itself to produce rounds. A <code class="code">type-error</code> is signaled if <var class="var">row</var> is
+not a <code class="code">row</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (order !13527486) &rArr; 7
+ (order !31256784) &rArr; 15
+ (order !12345678) &rArr; 1
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="cycles"></a><a class="index-entry-id" id="index-cycles"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-cycles-1"><span class="category-def">Function: </span><span><strong class="def-name">cycles</strong> <var class="def-var-arguments">row</var><a class="copiable-link" href="#index-cycles-1"> &para;</a></span></dt>
+<dd><p>Returns a list of lists of bells. Each of the sublists is the orbit of all of its
+elements in <var class="var">row</var>. One cycles are included. Thus, if <var class="var">row</var> is a lead head, all the
+sublists of length one are hunt bells, all the rest being working bells; if there are two
+or more sublists of length greater than one the corresponding method is either a differential
+method or a short course method: if not all the sublists of length greater than one are of
+the same length then it is differential, and otherwise a short course method. The
+resulting sublists are each ordered such that the first bell is the lowest numbered bell
+in that cycle, and the remaining bells occur in the order in which a bell traverses the
+cycle. Within the top level list, the sublists are ordered such that the first bell of
+each sublist appear in ascending numerical order.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (cycles !13572468) &rArr; ((0) (1 4 2) (3 5 6) (7))
+ (format nil &quot;~{(~{~C~^,~})~^, ~}&quot;
+             (mapcar #'(lambda (x) (mapcar #'bell-name x))
+             (cycles !13572468)))
+     &rArr; &quot;(1), (2,5,3), (4,6,7), (8)&quot;
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="tenors_002dfixed_002dp"></a><a class="index-entry-id" id="index-tenors_002dfixed_002dp"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-tenors_002dfixed_002dp-1"><span class="category-def">Function: </span><span><strong class="def-name">tenors-fixed-p</strong> <var class="def-var-arguments">row &amp;optional starting-at</var><a class="copiable-link" href="#index-tenors_002dfixed_002dp-1"> &para;</a></span></dt>
+<dd><p>Returns true if and only if all the bells of <var class="var">row</var> at positions <var class="var">starting-at</var>
+or higher are in their rounds positions. In the degenerate case of <var class="var">starting-at</var> being
+equal to or greater than the stage of <var class="var">row</var> it returns true. Note that it is
+equivalent to <code class="code">(not (null (alter-stage <var class="var">row</var> <var class="var">starting-at</var>)))</code>. If not
+supplied <var class="var">starting-at</var> defaults to <code class="code">6</code>, that is the position of the bell
+conventionally called the seven, though represented in Roan by the small integer <code class="code">6</code>.
+Signals a <code class="code">type-error</code> if <var class="var">row</var> is not a <code class="code">row</code> or <var class="var">starting-at</var> is not a
+non-negative integer.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (tenors-fixed-p !13254678) &rArr; t
+ (tenors-fixed-p !13254678 5) &rArr; t
+ (tenors-fixed-p !13254678 4) &rArr; nil
+ (tenors-fixed-p !54321) &rArr; t
+ (tenors-fixed-p !54321 4) &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="which_002dplain_002dbob_002dlead_002dhead"></a><a class="index-entry-id" id="index-which_002dplain_002dbob_002dlead_002dhead"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-which_002dplain_002dbob_002dlead_002dhead-1"><span class="category-def">Function: </span><span><strong class="def-name">which-plain-bob-lead-head</strong> <var class="def-var-arguments">row</var><a class="copiable-link" href="#index-which_002dplain_002dbob_002dlead_002dhead-1"> &para;</a></span></dt>
+<dd><p>If <var class="var">row</var> is a lead head of a plain course of Plain Bob at its stage returns a
+positive integer identifying which lead head it is; returns <code class="code">nil</code> if <var class="var">row</var> is not
+a Plain Bob lead head. If <var class="var">row</var> is the first lead head of a plain course of Plain Bob
+<code class="code">1</code> is returned, if the second <code class="code">2</code>, etc. For the purposes of this function
+rounds is not a Plain Bob lead head, nor is any row below minimus. Signals a
+<code class="code">type-error</code> if <var class="var">row</var> is not a <code class="code">row</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (which-plain-bob-lead-head !13527486) &rArr; 1
+ (which-plain-bob-lead-head !42638507T9E) &rArr; 10
+ (which-plain-bob-lead-head !129785634) &rArr; nil
+ (which-plain-bob-lead-head !12345) &rArr; nil
+ (which-plain-bob-lead-head !132) &rArr; nil
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="which_002dgrandsire_002dlead_002dhead"></a><a class="index-entry-id" id="index-which_002dgrandsire_002dlead_002dhead"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-which_002dgrandsire_002dlead_002dhead-1"><span class="category-def">Function: </span><span><strong class="def-name">which-grandsire-lead-head</strong> <var class="def-var-arguments">row</var><a class="copiable-link" href="#index-which_002dgrandsire_002dlead_002dhead-1"> &para;</a></span></dt>
+<dd><p>If <var class="var">row</var> is a lead head of a plain course of Grandsire at its stage returns a
+positive integer identifying which lead head it is; returns <code class="code">nil</code> if <var class="var">row</var> is not
+a Grandsire lead head. If <var class="var">row</var> is the first lead head of a plain course of Grandsire
+<code class="code">1</code> is returned, if the second <code class="code">2</code>, etc. For the purposes of this function
+rounds is not a Grandsire lead head, nor is any row below minimus. Signals a
+<code class="code">type-error</code> if <var class="var">row</var> is not a <code class="code">row</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (which-plain-bob-lead-head !1253746) &rArr; 1
+ (which-plain-bob-lead-head !28967453) &rArr; 4
+ (which-plain-bob-lead-head !135264) &rArr; nil
+ (which-plain-bob-lead-head !1243) &rArr; 1
+ (which-plain-bob-lead-head !12345) &rArr; nil
+</pre></div></div>
+</dd></dl>
+
+<hr>
+</div>
+<div class="subsection-level-extent" id="Permuting-rows">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Properties-of-rows" rel="prev">Properties of rows</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Rows" rel="up">Rows</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h4 class="subsection" id="Permuting-rows-1"><span>2.3.2 Permuting rows<a class="copiable-link" href="#Permuting-rows-1"> &para;</a></span></h4>
+
+<a class="anchor" id="permute"></a><a class="index-entry-id" id="index-permute"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-permute-1"><span class="category-def">Function: </span><span><strong class="def-name">permute</strong> <var class="def-var-arguments">row &amp;rest changes</var><a class="copiable-link" href="#index-permute-1"> &para;</a></span></dt>
+<dd><p>Permutes <var class="var">row</var> by the <var class="var">changes</var> in turn. That is, <var class="var">row</var> is first permuted by
+the first of the <var class="var">changes</var>, then the resuling row is permuted by second of the
+<var class="var">changes</var>, and so on. Returns the row resulting from applying all the changes. So long
+as one or more <var class="var">changes</var> are supplied the returned <code class="code">row</code> is always a freshly
+created one: <var class="var">row</var> and none of the <var class="var">changes</var> are modified (as you&rsquo;d expect, since
+they are intended to be viewed as immutable). The <var class="var">row</var> and all the <var class="var">changes</var>
+should be <code class="code">row</code>s.
+</p>
+<p>At each step of permuting a row by a change, if the row is of higher stage than the
+change, only the first <var class="var">stage</var> bells of the row are permuted, where <var class="var">stage</var> is the
+stage of the change, all the remaining bells of the row being unmoved. If the row is of
+lower stage than the change, it is as if the row were extended with bells in their rounds&rsquo;
+positions for all the bells <var class="var">stage</var> and above. Thus the result of each permuation step
+is a <code class="code">row</code> whose stage is the larger of those of the row and the change.
+</p>
+<p>If no <var class="var">changes</var> are supplied <code class="code">row</code> is returned. Signals a <code class="code">type-error</code> if
+<var class="var">row</var> or any of the <var class="var">changes</var> are not <code class="code">row</code>s.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (permute !34256 !35264) &rArr; !145362
+ (permute !34125 !4321 !1342) &rArr; !24315
+ (permute !4321 !654321) &rArr; !651234
+ (let ((r !13572468))
+   (list (eq (permute r) r)
+         (equalp (permute r (rounds 8)) r)
+         (eq (permute r (rounds 8)) r)))
+     &rArr; (t t nil)
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="permute_002dcollection"></a><a class="index-entry-id" id="index-permute_002dcollection"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-permute_002dcollection-1"><span class="category-def">Function: </span><span><strong class="def-name">permute-collection</strong> <var class="def-var-arguments">collection change</var><a class="copiable-link" href="#index-permute_002dcollection-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-permute_002dby_002dcollection"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-permute_002dby_002dcollection-1"><span class="category-def">Function: </span><span><strong class="def-name">permute-by-collection</strong> <var class="def-var-arguments">row collection</var><a class="copiable-link" href="#index-permute_002dby_002dcollection-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-npermute_002dcollection"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-npermute_002dcollection-1"><span class="category-def">Function: </span><span><strong class="def-name">npermute-collection</strong> <var class="def-var-arguments">collection change</var><a class="copiable-link" href="#index-npermute_002dcollection-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-npermute_002dby_002dcollection"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-npermute_002dby_002dcollection-1"><span class="category-def">Function: </span><span><strong class="def-name">npermute-by-collection</strong> <var class="def-var-arguments">row collection</var><a class="copiable-link" href="#index-npermute_002dby_002dcollection-1"> &para;</a></span></dt>
+<dd><p>Permutes each of the elements of a sequence or <code class="code">hash-set</code> and an
+individual <code class="code">row</code>, collecting the results into a similar collection. The
+<code class="code">permute-collection</code> version permutes each the elements of <var class="var">collection</var> by
+<var class="var">change</var>; <code class="code">permute-by-collection</code> permutes <var class="var">row</var> by each of the elements of
+<var class="var">collection</var> by <var class="var">change</var>. The return value is a list, vector or <code class="code">hash-set</code> if
+<var class="var">collection</var> is a list, vector or <code class="code">hash-set</code>, respectively. The
+<code class="code">permute-collection</code> and <code class="code">permute-by-collection</code> versions always return a fresh
+collection; the <code class="code">npermute-collection</code> and <code class="code">npermute-by-collection</code> versions
+modify <var class="var">collection</var>, replacing its contents by the permuted rows. If <var class="var">collection</var>
+is a sequence the contents of the result are in the same order: that is, the Nth element
+of the result is the Nth element supplied in <var class="var">collection</var> permuted by or permuting
+<var class="var">change</var> or <var class="var">row</var>. If <var class="var">collection</var> is a vector, <code class="code">permute-collection</code>
+and <code class="code">permute-by-collection</code> always return a simple, general vector.
+</p>
+<p>If the result is a sequence, or if all the elements of <var class="var">collection</var> were of the same
+stage as one another, it is guaranteed that the result will be the same length or
+cardinality as <var class="var">collection</var>. However, if <var class="var">collection</var> is a <code class="code">hash-set</code>
+containing rows of different stages the result may be of lower cardinality than then the
+supplied <code class="code">hash-set</code>, if <var class="var">collection</var> contained two or more elements that were not
+<code class="code">equalp</code> because they were of different stages, but after being permuted by, or
+permuting, a higher stage row the results are <code class="code">equalp</code>.
+</p>
+<p>Signals a <code class="code">type-error</code> if <var class="var">change</var>, <var class="var">row</var> or any of the elements of
+<var class="var">collection</var> are not <code class="code">rows</code>s, or if <var class="var">collection</var> is not a sequence or
+<code class="code">hash-set</code>.
+</p></dd></dl>
+<a class="anchor" id="generate_002drows"></a><a class="index-entry-id" id="index-generate_002drows"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-generate_002drows-1"><span class="category-def">Function: </span><span><strong class="def-name">generate-rows</strong> <var class="def-var-arguments">changes &amp;optional initial-row</var><a class="copiable-link" href="#index-generate_002drows-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-ngenerate_002drows"></a>
+</dd><dt class="deffnx def-cmd-deffn def-line" id="index-ngenerate_002drows-1"><span class="category-def">Function: </span><span><strong class="def-name">ngenerate-rows</strong> <var class="def-var-arguments">changes &amp;optional initial-row</var><a class="copiable-link" href="#index-ngenerate_002drows-1"> &para;</a></span></dt>
+<dd><p>Generates a sequence of <code class="code">row</code>s by permuting a starting <code class="code">row</code>
+successively by each element of the sequence <var class="var">changes</var>. The elements of <var class="var">changes</var>
+should be <code class="code">row</code>s. If <var class="var">initial-row</var> is supplied it should be a <code class="code">row</code>. If it
+is not supplied, rounds at the same stage as the first element of <var class="var">changes</var> is used;
+if <var class="var">changes</var> is empty, rounds at <code class="code">*default-stage*</code> is used. Two values are
+returned. The first is a sequence of the same length as <var class="var">changes</var>, and the second is a
+<code class="code">row</code>. So long as <var class="var">changes</var> is not empty, the first element of the first return
+value is <var class="var">initial-row</var>, or the default rounds. The next value is that <code class="code">row</code>
+permuted by the first element of <var class="var">changes</var>; then that <code class="code">row</code> permuted by the next
+element of <var class="var">changes</var>, and so on, until all but the last element of <var class="var">changes</var> has
+been used. The second return value is the last element of the first return value permuted
+by the last element of <var class="var">changes</var>. If <var class="var">changes</var> is empty, then the first return
+value is also empty, and <var class="var">initial-row</var>, or the default rounds, is the second return
+value. Thus, for most methods, if <var class="var">changes</var> are the changes of a lead, the first
+return value will be the rows of a lead starting with <var class="var">initial-row</var>, and the second
+return value the lead head of the following lead.
+</p>
+<p>If <var class="var">changes</var> is a list, the first return value is a list; if <var class="var">changes</var> is a
+vector, the first return value is a vector. The <code class="code">generate-rows</code> function always
+returns a fresh sequence as its first return value, while <code class="code">ngenerate-rows</code> resuses
+<var class="var">changes</var>, replacing its elements by the permuted rows and returning it. The fresh
+vector created and returned by <code class="code">generate-rows</code> is always a simple, general vector.
+</p>
+<p>Signals an error if <var class="var">initial-row</var> is neither a <code class="code">row</code> nor <code class="code">nil</code>, if
+<var class="var">changes</var> isn&rsquo;t a sequence, or if any elements of <var class="var">changes</var> are not
+<code class="code">row</code>s.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (multiple-value-list
+   (generate-rows '(!2143 !1324 !2143 !1324) !4321))
+     &rArr; ((!4321 !3412 !3142 !1324) !1234)
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="permutation_002dclosure"></a><a class="index-entry-id" id="index-permutation_002dclosure"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-permutation_002dclosure-1"><span class="category-def">Function: </span><span><strong class="def-name">permutation-closure</strong> <var class="def-var-arguments">&amp;rest rows</var><a class="copiable-link" href="#index-permutation_002dclosure-1"> &para;</a></span></dt>
+<dd><p>Returns a list of distinct rows that can be generated by permuting, repeatedly if
+necessary, any of the <var class="var">rows</var> by themselves or any others of the <var class="var">rows</var>. If the
+<var class="var">rows</var> are not all of the same stage, the lower stage ones are converted to the
+highest stage present before the closure operation is performed. The order of the returned
+rows is undefined. Signals a <code class="code">type-error</code> if any of the <var class="var">rows</var> is not a
+<code class="code">row</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (permutation-closure !13425 !1324 !123465)
+   &rArr; (!143265 !142365 !124365 !142356 !143256 !124356
+       !134265 !132465 !123456 !123465 !132456 !134256)
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="inverse"></a><a class="index-entry-id" id="index-inverse"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-inverse-1"><span class="category-def">Function: </span><span><strong class="def-name">inverse</strong> <var class="def-var-arguments">row</var><a class="copiable-link" href="#index-inverse-1"> &para;</a></span></dt>
+<dd><p>Returns the inverse of the <code class="code">row</code> <var class="var">row</var>. That is, the <code class="code">row</code>, <var class="var">r</var>, such
+that when <var class="var">row</var> is permuted by <var class="var">r</var>, the result is rounds. A theorem of group
+theory implies also that when <var class="var">r</var> is permuted by <var class="var">row</var> the result will also be
+rounds. Signals a <code class="code">type-error</code> if <var class="var">row</var> is not a <code class="code">row</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (inverse !13427586) &rArr; !14236857
+ (inverse !14236857) &rArr; !13427586
+ (inverse !12436587) &rArr; !12436587
+ (inverse !12345678) &rArr; !12345678
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="permute_002dby_002dinverse"></a><a class="index-entry-id" id="index-permute_002dby_002dinverse"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-permute_002dby_002dinverse-1"><span class="category-def">Function: </span><span><strong class="def-name">permute-by-inverse</strong> <var class="def-var-arguments">row change</var><a class="copiable-link" href="#index-permute_002dby_002dinverse-1"> &para;</a></span></dt>
+<dd><p>Equivalent to <code class="code">(permute <var class="var">row</var> (inverse <var class="var">change</var>))</code>. Signals a
+<code class="code">type-error</code> if either <var class="var">row</var> or <var class="var">change</var> is not a <code class="code">row</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (permute-by-inverse !13456287 !45678123) &rArr; !28713456
+ (permute-by-inverse !54312 !2438756) &rArr; !54137862
+ (permute-by-inverse !762345 !4312) &rArr; !6271345
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="alter_002dstage"></a><a class="index-entry-id" id="index-alter_002dstage"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-alter_002dstage-1"><span class="category-def">Function: </span><span><strong class="def-name">alter-stage</strong> <var class="def-var-arguments">row &amp;optional new-stage</var><a class="copiable-link" href="#index-alter_002dstage-1"> &para;</a></span></dt>
+<dd><p>If there is a <code class="code">row</code>, <var class="var">r</var>, of stage <var class="var">new-stage</var> such that
+<code class="code">(equalp (permute (rounds <var class="var">new-stage</var>) <var class="var">r</var>) <var class="var">row</var>)</code> then returns <var class="var">r</var>,
+and otherwise <code class="code">nil</code>. That is, it returns a row of the <var class="var">new-stage</var> such that the
+first bells are as in <var class="var">row</var>, and any new or omitted bells are in rounds order. If not
+supplied <var class="var">new-stage</var> defaults to the current value of <code class="code">*default-stage*</code>. Signals
+a <code class="code">type-err</code> if <var class="var">row</var> is not a <code class="code">row</code> or <var class="var">new-stage</var> is not a
+<code class="code">stage</code>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (alter-stage !54321 10) &rArr; !5432167890
+ (alter-stage !5432167890 6) &rArr; !543216
+ (alter-stage !54321 4) &rArr; nil
+ (alter-stage !5432167890 4) &rArr; nil
+</pre></div></div>
+</dd></dl>
+
+
+<hr>
+</div>
+</div>
+<div class="section-level-extent" id="Place-notation">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Rows" rel="prev">Rows</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Fundamental-Types" rel="up">Fundamental Types</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="Place-notation-1"><span>2.4 Place notation<a class="copiable-link" href="#Place-notation-1"> &para;</a></span></h3>
+
+<p>Place notation is a succinct notation for writing sequences of changes, and is widely used
+in change ringing. Roan provides functions for reading and writing place notation,
+producing lists of <code class="code">row</code>s, representing changes.
+</p>
+<a class="index-entry-id" id="index-Lisp-reader-1"></a>
+<a class="index-entry-id" id="index-reader-macro-1"></a>
+<a class="index-entry-id" id="index-sharp-bang"></a>
+<a class="index-entry-id" id="index-_0023_0021-reader-macro"></a>
+<a class="index-entry-id" id="index-place-notation"></a>
+<a class="index-entry-id" id="index-palindromes"></a>
+<a class="index-entry-id" id="index-jump-changes"></a>
+<a class="index-entry-id" id="index-involutions"></a>
+<a class="index-entry-id" id="index-London-Treble-Jump-Minor"></a>
+<a class="index-entry-id" id="index-parentheses"></a>
+<a class="index-entry-id" id="index-brackets"></a>
+<a class="index-entry-id" id="index-_0028-in-place-notation"></a>
+<a class="index-entry-id" id="index-_005b-in-place-notation"></a>
+<a class="index-entry-id" id="index-dot"></a>
+<a class="index-entry-id" id="index-_002e-in-place-notation"></a>
+<a class="index-entry-id" id="index-comma"></a>
+<a class="index-entry-id" id="index-_002c-in-place-notation"></a>
+<a class="index-entry-id" id="index-x-in-place-notation"></a>
+<a class="index-entry-id" id="index-_002d-in-place-notation"></a>
+<a class="index-entry-id" id="index-_0029-following-place-notation"></a>
+<a class="index-entry-id" id="index-quote-1"></a>
+<p>Place notation manipulated by Roan is extended to support jump changes and comma as an
+unfolding operator for easy notation of palindromic sequences of changes.
+</p>
+<p>Jump changes may be included in the place notation in two ways.
+Note that the place notation implemented in Roan for jump changes is slightly different
+than that described in the Central Council&rsquo;s Framework for Method Ringing (FMR).
+Within changes may appear
+parenthesized pairs of places, indicating that the bell in the first place jumps to the
+second place. Thus the change (13)6 corresponds to the jump change 231546. As usual
+implied leading or lying places may be omitted, so that could also be written simply (13).
+However, just as with ordinary place notation, all internal places must be noted
+explicitly; for example, the change (13)(31) is illegal, and must be written (13)2(31).
+Using this notation the first half-lead of London Treble Jump Minor can be written
+3x3.(24)x2x(35).4x4.3.
+</p>
+<p>Jump changes may also be written by writing the full row between square brackets. So that
+same half-lead of London Treble Jump Minor could instead be notated
+3x3[134265]x2x[214536]4x4.3. Or they can be mixed 3x3[134265]x2x(35).4x4.3.
+</p>
+<p>Palindromes may be conveniently notated using a comma operator, which means the changes
+preceding the comma are rung backwads, following the last of the changes before the comma,
+which is not repeated; followed by the changes following the comma, similarly unfolded.
+Thus x3x4,2x3 is equivalent to x3x4x3x2x3x2. A piece of place notation may include at most
+one comma. Neither the changes before the comma nor after it may be empty. Any piece of
+place notation including a comma is necessarily of even length.
+</p>
+<p>If jump changes appear in place notation that is being unfolded then when rung in reverse
+the jump changes are inverted; this makes no difference to ordinary changes, which are
+always involutions, but is important for jump changes that are not involutions. If the
+central change about which the unfolding operation takes place, that is the last change
+in a sequence of changes being unfolded, is not an involution an error is signaled. As an
+example, a plain lead of London Treble Jump Minor can be notated as
+3x3.(24)x2x(35).4x4.3,2 which is equivalent to
+3x3.(24)x2x(35).4x4.3.4x4.(53)x2x(42).3x3.2.
+</p>
+<p>While place notation is normally written using dots (full stops) only between non-cross
+changes, <code class="code">parse-place-notation</code> will accept, and ignore, them between any changes,
+adjacent to other dots, and before and after place notation to be parsed. This may
+simplify operation with other software that emits place notation with extraneous dots.
+</p>
+<p>Just as Roan can augment the Lisp reader with &lsquo;<samp class="samp">!</samp>&rsquo; to read <code class="code">row</code>s, it can augment
+it with the &lsquo;<samp class="samp">#!</samp>&rsquo; reader macro to read place notatation. The stage at which the place
+notation is to be interpreted can be written as an integer between the &lsquo;<samp class="samp">#</samp>&rsquo; and the
+&lsquo;<samp class="samp">!</samp>&rsquo;. If no explict stage is provided the current value (at read time) of
+<code class="code">*default-stage*</code> is used. The sequence of place notation must be followed by a
+character that cannot appear in place notation, such as whitespace, or by end of file.
+There is an exception that an unbalanced close parenthesis will also end the reading; this
+allows using this to read place notation in lists and vectors without requiring whitespace
+following the place notation. The place notation may be extended with the comma unfolding
+operator, and with jump changes. The stage at which the place notation is being iterpreted
+is not considered in deciding which characters to consume; all that might apply as place
+notation at any stage will be consumed. If some are not appropriate an error will only be
+signaled after all the continguous, place notation characters have been read.
+</p>
+<p>Note that, unlike <code class="code">row</code>s, which are Lisp atoms, the result of reading place notation
+is a list, so &lsquo;<samp class="samp">#!</samp>&rsquo; quotes it. This is appropriate in the usual case where the result
+of &lsquo;<samp class="samp">#!</samp>&rsquo; is evaluated, but if used in a context where it is not evaluated care must
+be exercised.
+</p>
+<p>This &lsquo;<samp class="samp">#!</samp>&rsquo; syntax can be turned on and off by using <a class="ref" href="#roan_002dsyntax">roan-syntax</a>. By default it
+is off when Roan is loaded. It is also possible to control this syntax by using
+<a class="url" href="https://github.com/melisgl/named-readtables/">Named Readtables</a>; see
+<a class="ref" href="#roan_002dsyntax">roan-syntax</a> for further details.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> ROAN&gt; #6!x2,1
+ (!214365 !124365 !214365 !132546)
+ ROAN&gt; '(symbol #6!x2,1 x #6!x2x1)
+ (SYMBOL '(!214365 !124365 !214365 !132546) X
+         '(!214365 !124365 !214365 !132546))
+ ROAN&gt; `(symbol ,#6!x2,1 x ,#6!x2x1)
+ (SYMBOL (!214365 !124365 !214365 !132546) X
+         (!214365 !124365 !214365 !132546))
+ ROAN&gt; #6!x2
+ (!214365 !124365)
+ ROAN&gt; (equalp #10!x1x4,2 #10!x1x4x1x2)
+ T
+ ROAN&gt; #6!x3.(13)(64)
+ (!214365 !213546 !231645)
+ ROAN&gt; #6!x3.(13).(64)
+ (!214365 !213546 !231546 !132645)
+ ROAN&gt; #6!x3[231546](64)
+ (!214365 !213546 !231546 !132645)
+</pre></div></div>
+
+<a class="anchor" id="parse_002dplace_002dnotation"></a><a class="index-entry-id" id="index-parse_002dplace_002dnotation"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-parse_002dplace_002dnotation-1"><span class="category-def">Function: </span><span><strong class="def-name">parse-place-notation</strong> <var class="def-var-arguments">string &amp;key stage start end junk-allowed</var><a class="copiable-link" href="#index-parse_002dplace_002dnotation-1"> &para;</a></span></dt>
+<dd><p>Parses place notation from <var class="var">string</var>, returning a list of <code class="code">row</code>s, representing
+changes, of stage <var class="var">stage</var>. The place notation is parsed as applying to stage
+<var class="var">stage</var>, which, if not supplied, defaults to current value of <code class="code">*default-stage*</code>.
+Only that portion of <var class="var">string</var> between <var class="var">start</var> and <var class="var">end</var> is parsed; <var class="var">start</var>
+should be a non-negative integer, and <var class="var">end</var> either an integer larger than <var class="var">start</var>
+or <code class="code">nil</code>, which latter is equivalent to the length of <var class="var">string</var>. If
+<var class="var">junk-allowed</var>, a generalized Boolean, is <code class="code">nil</code>, the default, <var class="var">string</var> must
+consist of the place notation parsed and nothing else; otherwise non-place notation
+characters may follow the place notation. For purposes of parsing <var class="var">stage</var> is not
+initially considered: if the place notation is only appropriate for higher stages it will
+not terminate the parse even if <var class="var">junk-allowed</var> is true, it will instead signal an
+error. Two values are returned. The first is a list of <code class="code">row</code>s, the changes parsed.
+The second is the index of the next character in <var class="var">string</var> following the place notation
+that was parsed.
+</p>
+<p>If the section of <var class="var">string</var> delimited by <var class="var">start</var> and <var class="var">end</var> does not contain
+place notation suitable for <var class="var">stage</var> a <code class="code">parse-error</code> is signaled. If
+<var class="var">string</var> is not a string, <var class="var">stage</var> is not a <code class="code">stage</code> or <var class="var">start</var> or
+<var class="var">end</var> are not suitable bounding index designators a <code class="code">type-error</code> is signaled.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (multiple-value-list (parse-place-notation &quot;x2.3&quot; :stage 6))
+     &rArr; ((!214365 !124365 !213546) 4)
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="read_002dplace_002dnotation"></a><a class="index-entry-id" id="index-read_002dplace_002dnotation"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-read_002dplace_002dnotation-1"><span class="category-def">Function: </span><span><strong class="def-name">read-place-notation</strong> <var class="def-var-arguments">&amp;optional stream stage eof-error-p eof-value recursive-p</var><a class="copiable-link" href="#index-read_002dplace_002dnotation-1"> &para;</a></span></dt>
+<dd><p>Reads place notation from a stream, resulting in a list of <code class="code">row</code>s representing
+changes. Reads all the consecutive characters that can appear in (extended) place
+notation, and then tries to parse them as place notation. It accumulates characters that
+could appear as place notation at any stage, even stages above <var class="var">stage</var>. The sequence
+of place notation must be followed by a character that cannot appear in place notation,
+such as whitespace, or by end of file. There is an exception, in that an unbalanced close
+parenthesis will also end the read; this allows using this to read place notation in lists
+and vectors without requiring whitespace following the place notation. The place notation
+may be extended with the comma unfolding operator, and with jump changes, as in
+<code class="code">parse-place-notation</code>. The argument <var class="var">stream</var> is a character stream open for
+reading, and defaults to the current value of <code class="code">*standard-input*</code>; <var class="var">stage</var> is a
+<code class="code">stage</code>, an integer, and defaults to the current value of <code class="code">*default-stage*</code>; and
+<var class="var">eof-error-p</var>, <var class="var">eof-value</var> and <var class="var">recursive-p</var> are as for the standard
+<code class="code">read</code> function, defaulting to <code class="code">t</code>, <code class="code">nil</code> and <code class="code">nil</code>, respectively.
+Returns a non-empty list of <code class="code">row</code>s, all of stage <var class="var">stage</var>. Signals an error if no
+place notation constituents are available, if the characters read cannot be parsed
+as (extended) place noation at <var class="var">stage</var>, or if one of the usual errorneous conditions
+while reading occurs.
+</p></dd></dl>
+<a class="index-entry-id" id="index-writing-place-notation"></a>
+<a class="index-entry-id" id="index-formatting-place-notation"></a>
+<a class="index-entry-id" id="index-comma-1"></a>
+<a class="index-entry-id" id="index-_002c-in-place-notation-1"></a>
+<a class="index-entry-id" id="index-jump-changes-1"></a>
+<a class="anchor" id="write_002dplace_002dnotation"></a><a class="index-entry-id" id="index-write_002dplace_002dnotation"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-write_002dplace_002dnotation-1"><span class="category-def">Function: </span><span><strong class="def-name">write-place-notation</strong> <var class="def-var-arguments">changes &amp;key stream escape comma elide cross upper-case jump-changes</var><a class="copiable-link" href="#index-write_002dplace_002dnotation-1"> &para;</a></span></dt>
+<dd><p>Writes to <var class="var">stream</var> characters representing place notation for <var class="var">changes</var>, a list
+of <code class="code">row</code>s.
+</p>
+<p>The list <var class="var">changes</var> should be a non-empty list of <code class="code">row</code>s, all of the same stage.
+The <var class="var">stream</var> should a character stream open for writing. It defaults to the current
+value of <code class="code">*standard-output*</code>. If the generalized boolean <var class="var">escape</var>, which defaults
+to the current value of <code class="code">*print-escape*</code>, is true the place notation will be written
+using the &lsquo;<samp class="samp">#!</samp>&rsquo; read macro to allow the Lisp <code class="code">read</code> function to read it; in this
+case the stage will always be explicitly noted between the &lsquo;<samp class="samp">#</samp>&rsquo; and the &lsquo;<samp class="samp">!</samp>&rsquo;. If
+the generalized boolean <var class="var">upper-case</var>, which defaults to the current value of
+<code class="code">*print-bells-upper-case*</code>, is true positions notated using letters will be written
+in upper case, and otherwise in lower case.
+</p>
+<p>The argument <var class="var">cross</var> controls which character is used to denote a cross change at even
+stages. It must be a character designator for <code class="code"> #\x</code>, <code class="code">#\X</code> or <code class="code">#\-</code>,
+and defaults to the current value of <code class="code">*cross-character*</code>.
+</p>
+<p>The argument <var class="var">jump-changes</var> should be one of <code class="code">nil</code>, <code class="code">:jumps</code> or <code class="code">:full</code>.
+It determines how jump changes will be notated. If it is <code class="code">nil</code> and <var class="var">changes</var>
+contains any jump changes an error will be signaled. If it is <code class="code">:jumps</code> any jump
+changes will be notated using pairs of places between parentheses. While
+<code class="code">parse-place-notation</code> and <code class="code">read-place-notation</code> can interpret ordinary conjunct
+motion or even place making notated in parentheses, <code class="code">write-place-notation</code> will only
+use parentheses for bells actually moving more than one place. If <var class="var">jump-changes</var> is
+<code class="code">:full</code> jump changes will be notated as a row between square brackets. Again, while
+ordinary changes notated this way can be parsed or read, <code class="code">write-place-notation</code> will
+only use bracket notation for jump changes.
+</p>
+<p>The argument <var class="var">elide</var> determines whether, and how, to omit leading and/or lying places.
+If the stage of the changes in <var class="var">changes</var> is odd, or if <var class="var">elide</var> is <code class="code">nil</code>, no
+such elision takes place. Otherwise <var class="var">elide</var> should be one of <code class="code">:interior</code>,
+<code class="code">:leading</code>, <code class="code">:lying</code> or <code class="code">:lead-end</code>, which last is its default value. For
+any of these non-nil values leading or lying places will always be elided if there are
+interior places. They differ only for hunts (that is, changes with both a leading and
+lying place, and no interior places). If <code class="code">:interior</code>, no elision takes place if there
+are no interior places. If <code class="code">:leading</code>, the &rsquo;1&rsquo; is elided as implicitly available. If
+<code class="code">:lying</code>, the lying place is elided, so that the result is always &rsquo;1&rsquo;. The value
+<code class="code">:lead-end</code> specifies the same behavior as <code class="code">:lying</code> for all the elements of
+<var class="var">changes</var> except the last, for which it behaves as <code class="code">:leading</code>; this is often
+convenient for notating leads of treble dominated methods at even stages.
+</p>
+<p>If the generalized boolean <var class="var">comma</var> is true an attempt is made to write <var class="var">changes</var>
+using a comma operator separating it into palindromes. In general there can be multiple
+ways of splitting an arbitrary piece of place notation into palindromes. If this is the
+case the choice is made to favor first a division that has the palindrome after the comma
+of length one, and if that is not possible the division that has the shortest palindrome
+before the comma. Any sequence of changes of length two can be trivially divided into
+palindromes, but notating them with a comma is unhelpful, so <var class="var">comma</var> applies only to
+even length lists of changes of length greater than two. Whether or not a partitioning
+into palindromes was possible can be determined by examining the second value returned by
+this function, which will be true only if a comma was written.
+</p>
+<p>Returns two values, <var class="var">changes</var>, and a generalized Boolean indicating whether or not the
+result was written with a comma.
+</p>
+<p>Signals an error if <var class="var">changes</var> is empty, or contains rows of different stages, if
+<var class="var">stream</var> is not a character stream open for writing, or if any of the usual IO errors
+occurs.
+</p></dd></dl>
+<a class="anchor" id="place_002dnotation_002dstring"></a><a class="index-entry-id" id="index-place_002dnotation_002dstring"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-place_002dnotation_002dstring-1"><span class="category-def">Function: </span><span><strong class="def-name">place-notation-string</strong> <var class="def-var-arguments">changes &amp;key comma elide cross upper-case allow-jump-changes</var><a class="copiable-link" href="#index-place_002dnotation_002dstring-1"> &para;</a></span></dt>
+<dd><p>Returns a string of the place notation representing the list <var class="var">changes</var>. The
+arguments are the same as the like named arguments to <code class="code">write-place-notation</code>. A
+leading &rsquo;#!&rsquo; is never included in the result.
+</p>
+<p>Signals a <code class="code">type-error</code> if any elements of <var class="var">changes</var> are not <code class="code">row</code>s. Signals
+an error if <var class="var">changes</var> is empty or contains rows of different stages.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (multiple-value-list
+   (place-notation-string #8!x1x4,1 :elide nil))
+     &rArr; (&quot;x18x14x18x18&quot; nil)
+ (multiple-value-list
+   (place-notation-string #8!x1x4,1 :comma t))
+     &rArr; (&quot;x1x4,8&quot; t)
+ (multiple-value-list
+   (place-notation-string #8!x1x4,2 :elide :interior))
+     &rArr; (&quot;x18x4x18x18&quot; nil)
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="canonicalize_002dplace_002dnotation"></a><a class="index-entry-id" id="index-canonicalize_002dplace_002dnotation"></a>
+<dl class="first-deffn def-block">
+<dt class="deffn def-line" id="index-canonicalize_002dplace_002dnotation-1"><span class="category-def">Function: </span><span><strong class="def-name">canonicalize-place-notation</strong> <var class="def-var-arguments">string-or-changes &amp;key stage comma elide cross upper-case allow-jump-changes</var><a class="copiable-link" href="#index-canonicalize_002dplace_002dnotation-1"> &para;</a></span></dt>
+<dd><p>Returns a string representing the place notation in a canonical form. If
+<var class="var">string-or-changes</var> is a string it should be parseable as place notation at
+<var class="var">stage</var>, which defaults to the current value of <code class="code">*default-stage*</code>, and otherwise
+it should be a list of <code class="code">row</code>s, all of the same stage. Unless overridden by the other
+keyword arguments, which have the same effects as for <code class="code">write-place-notation</code>, the
+canonical form is a compact one using lower case &lsquo;<samp class="samp">x</samp>&rsquo; for cross, upper case letters for
+high place names, <code class="code">lead-end</code> style elision of external places, a comma for unfolding
+if possible, and notating jump changes as jumps within parentheses.
+</p>
+<p>Signals a <code class="code">type-error</code> if <var class="var">string-or-changes</var> is neither a string nor a list, or
+if it is a list containing anything other than <code class="code">row</code>s. Signals a <code class="code">parse-error</code> if
+<var class="var">string-or-changes</var> is a string and is not parseable at <var class="var">stage</var>, or if <var class="var">stage</var>
+is not a <code class="code">stage</code>. Signals an error if <var class="var">cross</var> is not a suitable character
+designator, if <var class="var">allow-jump-changes</var> is not one of its allowed values, or if
+<var class="var">string-or-changes</var> is a list containing <code class="code">row</code>s of different stages.
+See <a class="xref" href="#write_002dplace_002dnotation">write-place-notation</a>.
+</p><div class="example">
+<div class="group"><pre class="example-preformatted"> (multiple-value-list
+   (canonicalize-place-notation &quot;-16.X.14-6X1&quot; :stage 6))
+     &rArr; (&quot;x1x4,6&quot; t)
+ (multiple-value-list
+   (canonicalize-place-notation &quot;-3-[134265]-1T-&quot; :stage 12))
+     &rArr; (&quot;x3x(24)x1x&quot; nil)
+</pre></div></div>
+</dd></dl>
+<a class="anchor" id="g_t_002across_002dcharacter_002a"></a><a class="index-entry-id" id="index-_002across_002dcharacter_002a"></a>
+<dl class="first-defvr def-block">
+<dt class="defvr def-line" id="index-_002across_002dcharacter_002a-1"><span class="category-def">Variable: </span><span><strong class="def-name">*cross-character*</strong><a class="copiable-link" href="#index-_002across_002dcharacter_002a-1"> &para;</a></span></dt>
+<dd><p>The character used by default as &ldquo;cross&rdquo; when writing place notation. Must be a
+character designator for one of <code class="code">#\x</code>, <code class="code">#\X</code> or <code class="code">#\-</code>. Its initial
+default value is a lower case &lsquo;<samp class="samp">x</samp>&rsquo;, <code class="code">#\x</code>.
+</p></dd></dl>
+
+
+</div>
+</div>
+<hr>
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="Hash_002dsets.html#Hash_002dsets" rel="next">Hash-sets</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="Introduction.html#Introduction" rel="prev">Introduction</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="Documentation-Index.html" title="Index" rel="index">Index</a>]</span></p>
+
+
+
+</body>
+</html>
